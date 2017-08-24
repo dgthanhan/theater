@@ -47,7 +47,7 @@
 
             var arm = (process.arch === "arm");
             var cmd = arm ? "/home/pi/apps/sopcast/sop.sh" : "/usr/bin/sp-sc-auth";
-            
+
             thiz.workerProcess = spawn(cmd, [url, LOCAL_PORT, PLAYER_PORT], {stdio: "ignore"});
             thiz.workerProcess.on("exit", function () {
                 thiz.status = State.Idle;

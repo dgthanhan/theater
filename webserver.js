@@ -8,7 +8,7 @@
 
     function start() {
         server = express();
-        server.use("/static", express.static(path.join(__dirname, "ui")));
+        server.use("/static", express.static(path.join(__dirname, "ui/static")));
 
         server.get("/api/services", function (request, response) {
             var services = serviceManager.getServices();

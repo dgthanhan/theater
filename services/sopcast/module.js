@@ -40,6 +40,42 @@
                         url: "sop://178.239.62.116:3912/140335",
                         extras: {}
                     });
+                    contents.push({
+                        title: "CBNS TV",
+                        contentType: "video",
+                        duration: null,
+                        description: "CBNS TV Free streaming Classic and new Sci-Fi movies all day",
+                        thumbnails: ["https://pbs.twimg.com/profile_images/670291739207458816/E8EMpfY1.jpg"],
+                        url: "sop://178.239.62.116:3912/140335",
+                        extras: {}
+                    });
+                    contents.push({
+                        title: "CBNS TV",
+                        contentType: "video",
+                        duration: null,
+                        description: "CBNS TV Free streaming Classic and new Sci-Fi movies all day",
+                        thumbnails: ["https://pbs.twimg.com/profile_images/670291739207458816/E8EMpfY1.jpg"],
+                        url: "sop://178.239.62.116:3912/140335",
+                        extras: {}
+                    });
+                    contents.push({
+                        title: "CBNS TV",
+                        contentType: "video",
+                        duration: null,
+                        description: "CBNS TV Free streaming Classic and new Sci-Fi movies all day",
+                        thumbnails: ["https://pbs.twimg.com/profile_images/670291739207458816/E8EMpfY1.jpg"],
+                        url: "sop://178.239.62.116:3912/140335",
+                        extras: {}
+                    });
+                    contents.push({
+                        title: "CBNS TV",
+                        contentType: "video",
+                        duration: null,
+                        description: "CBNS TV Free streaming Classic and new Sci-Fi movies all day",
+                        thumbnails: ["https://pbs.twimg.com/profile_images/670291739207458816/E8EMpfY1.jpg"],
+                        url: "sop://178.239.62.116:3912/140335",
+                        extras: {}
+                    });
                 }
 
                 thiz.cache = {};
