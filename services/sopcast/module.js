@@ -2,12 +2,12 @@
 
     const {State} = require("../common.js");
     const {spawn} = require("child_process");
+    const SopcastConverter = require("./sopcast-converter.js");
 
     function SopcastService() {
         this.type = SopcastService.TYPE;
         this.name = "Sopcast";
-        this.status = State.Idle;
-        this.workerProcess = null;
+        this.converter = null;
         this.sources = [
             require("./source-sopsport_org.js")
         ];
@@ -26,8 +26,31 @@
             promises.push(promise);
         }
 
+        var thiz = this;
+
         return new Promise(function (resolve, reject) {
             Promise.all(promises).then(function () {
+                if (contents.length == 0) {
+                    contents.push({
+                        title: "CBNS TV",
+                        contentType: "video",
+                        duration: null,
+                        description: "CBNS TV Free streaming Classic and new Sci-Fi movies all day",
+                        thumbnails: ["https://pbs.twimg.com/profile_images/670291739207458816/E8EMpfY1.jpg"],
+                        url: "sop://178.239.62.116:3912/140335",
+                        extras: {}
+                    });
+                }
+
+                thiz.cache = {};
+
+                for (var content of contents) {
+                    content.type = SopcastService.TYPE;
+                    thiz.cache[content.url] = content;
+                }
+
+                console.log("Cache", thiz.cache);
+
                 resolve(contents);
             }).catch(function (e) {
                 reject(e);
@@ -38,33 +61,49 @@
     SopcastService.prototype.start = function (content) {
         var thiz = this;
 
-        if (this.workerProcess) {
-            try {
-                this.workerProcess.removeAllListeners();
-                this.workerProcess.kill("SIGKILL");
-            } catch (e) {}
-        }
+        return new Promise(function (resolve, reject) {
+            if (thiz.converter) {
+                try {
+                    thiz.converter.destroy();
+                } catch (e) {}
+            } else {
+                thiz.converter = new SopcastConverter();
+            }
 
-        this.status = State.Preparing;
-
-        this.workerProcess = spawn("/usr/bin/sp-sc-auth", [content.url, "3908", "8908"], {stdio: "inherit", shell: true});
-        this.workerProcess.on("exit", function () {
-            console.log("workerProcess exited");
-            thiz.status = State.Idle;
-            thiz.workerProcess = null;
+            thiz.converter.convert(content.url).then(function (url) {
+                resolve({
+                    url: url,
+                    content: content
+                })
+            }).catch(function (e) {
+                reject(e);
+            });
         });
-
-        this.workerProcess.stdout.on("data", function (data) {
-            console.log("SOP: ", data.toString());
-        });
-
-        // this.workerProcess.stdout.pipe(process.stdout);
     };
     SopcastService.prototype.terminate = function () {
+        if (this.converter) {
+            try {
+                this.converter.destroy();
+            } catch (e) {}
+        }
+    };
+
+    SopcastService.prototype.findCachedContent = function (url) {
+        console.log("Finding: " + url + " in ", this.cache);
+        return this.cache ? this.cache[url] : {
+            title: url,
+            contentType: "video",
+            type: SopcastService.TYPE,
+            duration: null,
+            description: "",
+            thumbnails: [],
+            url: url,
+            extras: {}
+        };
     };
 
     SopcastService.prototype.getCurrentStatus = function () {
-        //IDLE, PREPARING, SERVING
+        return this.converter ? this.converter.status : State.Idle;
     };
 
     module.exports = new SopcastService();

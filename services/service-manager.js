@@ -1,19 +1,23 @@
 (function () {
+    var services = [];
+    var serviceMap = {};
+
     var Manager = {
-        services: [],
-        serviceMap: {},
         registerService: function (service) {
-            this.services.push(service);
-            this.serviceMap[service.type] = service;
+            services.push(service);
+            serviceMap[service.type] = service;
         },
         getService: function (type) {
-            return this.serviceMap[type];
+            return serviceMap[type];
         }
     };
 
     Manager.registerService(require("./sopcast/module.js"));
     // Manager.registerService(require("torrent/module.js"));
     // Manager.registerService(require("youtube/module.js"));
+    Manager.getServices = function () {
+        return services;
+    };
 
     module.exports = Manager;
 })();
