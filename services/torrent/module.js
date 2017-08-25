@@ -2,20 +2,20 @@
 
     const {State} = require("../common.js");
     const {spawn} = require("child_process");
-    const SopcastConverter = require("./sopcast-converter.js");
+    const TorrentConverter = require("./torrent-converter.js");
 
-    function SopcastService() {
-        this.type = SopcastService.TYPE;
-        this.name = "Sopcast";
+    function TorrentService() {
+        this.type = TorrentService.TYPE;
+        this.name = "Torrent";
         this.converter = null;
         this.sources = [
-            require("./source-sopsport_org.js")
+            require("./source-yts.js")
         ];
     }
 
-    SopcastService.TYPE = "sopcast";
+    TorrentService.TYPE = "torrent";
 
-    SopcastService.prototype.findAvailableContents = function () {
+    TorrentService.prototype.findAvailableContents = function () {
         var promises = [];
         var contents = [];
         for (var source of this.sources) {
@@ -29,22 +29,11 @@
 
         return new Promise(function (resolve, reject) {
             Promise.all(promises).then(function () {
-                if (contents.length == 0) {
-                    contents.push({
-                        title: "CBNS TV",
-                        contentType: "video",
-                        duration: null,
-                        description: "CBNS TV Free streaming Classic and new Sci-Fi movies all day",
-                        thumbnails: ["https://pbs.twimg.com/profile_images/670291739207458816/E8EMpfY1.jpg"],
-                        url: "sop://178.239.62.116:3912/140335",
-                        extras: {}
-                    });
-                }
 
                 thiz.cache = {};
 
                 for (var content of contents) {
-                    content.type = SopcastService.TYPE;
+                    content.type = TorrentService.TYPE;
                     thiz.cache[content.url] = content;
                 }
 
@@ -55,7 +44,7 @@
         });
     };
 
-    SopcastService.prototype.start = function (content) {
+    TorrentService.prototype.start = function (content) {
         var thiz = this;
 
         return new Promise(function (resolve, reject) {
@@ -64,7 +53,7 @@
                     thiz.converter.destroy();
                 } catch (e) {}
             } else {
-                thiz.converter = new SopcastConverter();
+                thiz.converter = new TorrentConverter();
             }
 
             thiz.converter.convert(content.url).then(function (url) {
@@ -77,7 +66,7 @@
             });
         });
     };
-    SopcastService.prototype.terminate = function () {
+    TorrentService.prototype.terminate = function () {
         if (this.converter) {
             try {
                 this.converter.destroy();
@@ -85,11 +74,11 @@
         }
     };
 
-    SopcastService.prototype.findCachedContent = function (url) {
+    TorrentService.prototype.findCachedContent = function (url) {
         return this.cache ? this.cache[url] : {
             title: url,
             contentType: "video",
-            type: SopcastService.TYPE,
+            type: TorrentService.TYPE,
             duration: null,
             description: "",
             thumbnails: [],
@@ -98,9 +87,9 @@
         };
     };
 
-    SopcastService.prototype.getCurrentStatus = function () {
+    TorrentService.prototype.getCurrentStatus = function () {
         return this.converter ? this.converter.status : State.Idle;
     };
 
-    module.exports = new SopcastService();
+    module.exports = new TorrentService();
 })();
