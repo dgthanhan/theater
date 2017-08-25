@@ -32,6 +32,37 @@
         });
     }
 
+    function killAllBackends() {
+        return new Promise(function (resolve, reject) {
+            exec("ps aux | grep sp-sc-auth", function (error, stdout, stderr) {
+                var ids = [];
+                if (stdout) {
+                    var lines = stdout.split(/[\r\n]+/);
+                    for (var line of lines) {
+                        if (line.match(/^[^ \t]+[ \t]+([0-9]+).*/) && line.indexOf("grep") < 0) {
+                            var pid = RegExp.$1;
+                            ids.push(pid);
+                        }
+                    }
+                }
+
+                var index = -1;
+                var next = function () {
+                    index ++;
+                    if (index >= ids.length) {
+                        resolve();
+                        return;
+                    }
+
+                    console.log("KILL " + ids[index]);
+                    exec("kill -9 " + ids[index], next);
+                };
+
+                next();
+            });
+        });
+    }
+
     SopcastConverter.prototype.convert = function (url, options) {
         var thiz = this;
 
@@ -45,29 +76,31 @@
         return new Promise(function (resolve, reject) {
             thiz.status = State.Preparing;
 
-            var arm = (process.arch === "arm");
-            var cmd = arm ? "/home/pi/apps/sopcast/sop.sh" : "/usr/bin/sp-sc-auth";
+            killAllBackends().then(function () {
+                var arm = (process.arch === "arm");
+                var cmd = arm ? "/home/pi/apps/sopcast/sop.sh" : "/usr/bin/sp-sc-auth";
 
-            thiz.workerProcess = spawn(cmd, [url, LOCAL_PORT, PLAYER_PORT], {stdio: "ignore"});
-            thiz.workerProcess.on("exit", function () {
-                thiz.status = State.Idle;
-                thiz.workerProcess = null;
-                console.log("sp-sc-auth exited.");
-            });
+                thiz.workerProcess = spawn(cmd, [url, LOCAL_PORT, PLAYER_PORT], {stdio: "ignore"});
+                thiz.workerProcess.on("exit", function () {
+                    thiz.status = State.Idle;
+                    thiz.workerProcess = null;
+                    console.log("sp-sc-auth exited.");
+                });
 
-            waitForPort(PLAYER_PORT, 10).then(function () {
-                setTimeout(function () {
-                    var streamURL = "http://" + INTERFACE + ":" + PLAYER_PORT + "/tv.asf";
-                    thiz.status = State.Serving;
-                    resolve(streamURL);
-                }, 1000);
-            }).catch(function (e) {
-                try {
-                    thiz.workerProcess.removeAllListeners();
-                    thiz.workerProcess.kill("SIGKILL");
-                } catch (e) {}
-                thiz.status = State.Idle;
-                reject(new Error("Failed to wait for sopcast." + e));
+                waitForPort(PLAYER_PORT, 10).then(function () {
+                    setTimeout(function () {
+                        var streamURL = "http://" + INTERFACE + ":" + PLAYER_PORT + "/tv.asf";
+                        thiz.status = State.Serving;
+                        resolve(streamURL);
+                    }, 1000);
+                }).catch(function (e) {
+                    try {
+                        thiz.workerProcess.removeAllListeners();
+                        thiz.workerProcess.kill("SIGKILL");
+                    } catch (e) {}
+                    thiz.status = State.Idle;
+                    reject(new Error("Failed to wait for sopcast." + e));
+                });
             });
         });
     };
