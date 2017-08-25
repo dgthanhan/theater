@@ -2,6 +2,7 @@
     const express = require("express");
     const path = require("path");
     const serviceManager = require("./services/service-manager.js");
+    const common = require("./services/common.js");
     const addWSSupport = require("express-ws");
 
     var server = null;
@@ -58,7 +59,9 @@
             broadcast(status);
         })
 
-        server.listen(12002);
+        var ip = common.findLANAddress();
+        console.log("Listen at: " + ip);
+        server.listen(12002, ip);
         console.log("Web server started.");
     }
 
