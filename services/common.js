@@ -1,9 +1,9 @@
 (function () {
     var Common = {
         State: {
-            Idle: 0,
-            Preparing: 1,
-            Serving: 2
+            Idle: "idle",
+            Preparing: "preparing",
+            Serving: "serving"
         },
         findLANAddress: function () {
             const os = require("os");

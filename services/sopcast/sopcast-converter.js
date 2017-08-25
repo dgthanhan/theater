@@ -58,6 +58,7 @@
             waitForPort(PLAYER_PORT, 10).then(function () {
                 setTimeout(function () {
                     var streamURL = "http://" + INTERFACE + ":" + PLAYER_PORT + "/tv.asf";
+                    thiz.status = State.Serving;
                     resolve(streamURL);
                 }, 1000);
             }).catch(function (e) {

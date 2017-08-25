@@ -1,0 +1,85 @@
+<vbox>
+    <style>
+        @this {
+            background: #336699;
+            color: #FFF;
+            padding: 1em;
+            box-shadow: 0px 2px 7px rgba(0, 0, 0, 0.4);
+            margin-bottom: 0.3em;
+        }
+
+        @image {
+            position: absolute;
+            display: none;
+        }
+        @thumbnailList {
+            width: 10em;
+            height: 5em;
+            margin-right: 1em;
+        }
+        @thumbnailList > .widget_ImageView {
+            flex: 1 1 0em;
+        }
+        @currentContentPane,
+        @currentContentPane * {
+            overflow: hidden;
+        }
+        @description {
+            text-overflow: ellipsis;
+            white-space: wrap;
+            overflow: hidden;
+            opacity: 0.7;
+            font-size: 0.9em;
+        }
+        @playbackStatusPane {
+            margin-top: 1em;
+            justify-content: center;
+        }
+        @originalLink {
+            font-size: 0.85em;
+            color: #fff;
+        }
+
+        @playbackStatusPane {
+            align-items: center;;
+        }
+        @playbackStatusPane > i {
+            font-size: 1.3em;
+            margin-right: 0.7em;
+            display: none;
+        }
+        @playbackStatusPane[status='idle'] > @idleIndicator {
+            display: inline-block;
+        }
+        @playbackStatusPane[status='preparing'] > @preparingIndicator {
+            display: inline-block;
+        }
+        @playbackStatusPane[status='serving'] > @servingIndicator {
+            display: inline-block;
+        }
+        @playbackStatusPane[status='idle'] {
+            color: #FFF;
+            opacity: 0.6;
+        }
+        @playbackStatusPane[status='preparing'] {
+            color: #FFF;
+        }
+        @playbackStatusPane[status='serving'] {
+            color: #7F7;
+        }
+    </style>
+    <hbox anon-id="currentContentPane">
+        <hbox anon-id="thumbnailList"></hbox>
+        <vbox anon-id="textInfo" flex="1">
+            <strong anon-id="title"></strong>
+            <div anon-id="description" flex="1"></div>
+            <a anon-id="originalLink"></a>
+        </vbox>
+    </hbox>
+    <hbox anon-id="playbackStatusPane">
+        <i anon-id="idleIndicator" class="mdi mdi-radiobox-blank" />
+        <i anon-id="preparingIndicator" class="mdi mdi-run" />
+        <i anon-id="servingIndicator" class="mdi mdi-cast-connected" />
+        <div anon-id="playbackStatusMessage"></div>
+    </hbox>
+</vbox>

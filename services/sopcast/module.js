@@ -19,7 +19,6 @@
         var promises = [];
         var contents = [];
         for (var source of this.sources) {
-            console.log("Source: " + source.name);
             var promise = source.find().then(function(items) {
                 contents = contents.concat(items);
             });
@@ -85,8 +84,6 @@
                     thiz.cache[content.url] = content;
                 }
 
-                console.log("Cache", thiz.cache);
-
                 resolve(contents);
             }).catch(function (e) {
                 reject(e);
@@ -125,7 +122,6 @@
     };
 
     SopcastService.prototype.findCachedContent = function (url) {
-        console.log("Finding: " + url + " in ", this.cache);
         return this.cache ? this.cache[url] : {
             title: url,
             contentType: "video",

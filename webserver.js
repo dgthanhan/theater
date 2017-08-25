@@ -2,12 +2,17 @@
     const express = require("express");
     const path = require("path");
     const serviceManager = require("./services/service-manager.js");
+    const addWSSupport = require("express-ws");
 
     var server = null;
+    var wsServer = null;
     var player = null;
+    var statusWSEnpoint = null;
 
     function start() {
         server = express();
+        wsServer = addWSSupport(server);
+
         server.use("/static", express.static(path.join(__dirname, "ui/static")));
 
         server.get("/api/services", function (request, response) {
@@ -32,30 +37,26 @@
         });
 
         server.get("/api/play", function (request, response) {
-            var service = serviceManager.getService(request.query.service);
-            var url = request.query.url;
-
-            console.log("Playing: ", url, service.type);
-
-            var content = service.findCachedContent(url);
-            if (!content) {
-                response.status(500).send({message: "Content not found"});
-                return;
-            }
-
-            service.start(content).then(function (resolvedContent) {
-                console.log("Resolved URL", resolvedContent.url);
-                player.stop().then(function() {
-                    player.play(resolvedContent.url);
-                }).catch(function (e) {
-                    console.error(e);
-                    response.status(500).send(e);
-                });
+            serviceManager.play(request.query.service, request.query.url).then(function () {
                 response.json({message: "OK"})
-            }).catch(function (e) {
+            }).catch (function () {
                 response.status(500).send(e);
             });
         });
+
+        server.ws("/status", function(ws, request) {
+            ws.on("message", function(msg) {
+                if (msg === "get") ws.send(JSON.stringify(serviceManager.getCurrentStatus()));
+            });
+        });
+
+        wsServer.getWss().on("connection", function (ws, request) {
+            ws.send(JSON.stringify(serviceManager.getCurrentStatus()));
+        });
+
+        serviceManager.hub.on("status", function (status) {
+            broadcast(status);
+        })
 
         server.listen(12002);
         console.log("Web server started.");
@@ -65,6 +66,12 @@
         player = providedPlayer;
     }
 
+    function broadcast(status) {
+        if (!wsServer || !wsServer.getWss().clients) return;
+        wsServer.getWss().clients.forEach(function (client) {
+            if (client.readyState === 1) client.send(JSON.stringify(status));
+        });
+    }
 
 
     module.exports = {

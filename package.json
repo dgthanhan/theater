@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "express": "^4.15.4",
+    "express-ws": "^3.0.0",
     "peerflix": "^0.37.0",
     "request": "^2.81.0"
   }

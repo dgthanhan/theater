@@ -3,6 +3,7 @@ function ImageView() {
     ImageView.instance = this;
 
     this.bind("load", function () {
+        console.log("WxH", this.image.naturalWidth, this.image.naturalHeight);
         var w = this.image.naturalWidth;
         var h = this.image.naturalHeight;
         var W = this.node().offsetWidth;
@@ -26,6 +27,8 @@ function ImageView() {
 __extend(BaseApplicationView, ImageView);
 
 ImageView.prototype.setUrl = function(url) {
-    this.image.style.display = "none";
-    this.image.src = url;
+    window.setTimeout(function () {
+        this.image.style.display = "none";
+        this.image.src = url;
+    }.bind(this), 10);
 };
