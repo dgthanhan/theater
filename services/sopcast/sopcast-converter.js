@@ -44,6 +44,7 @@
                     for (var line of lines) {
                         if (line.match(/^[^ \t]+[ \t]+([0-9]+).*/) && line.indexOf("grep") < 0) {
                             var pid = RegExp.$1;
+                            console.log("FOUND: " + pid + " > " + line);
                             ids.push(pid);
                         }
                     }
