@@ -24,6 +24,7 @@ SystemStatusView.prototype.setStatus = function (status) {
     if (status.content) {
         for (var url of status.content.thumbnails) {
             var imageView = new ImageView().into(this.thumbnailList);
+            imageView.setCenterCrop(status.content.thumbnails.length == 1);
             imageView.setUrl(url);
         }
 

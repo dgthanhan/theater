@@ -28,6 +28,7 @@
                             description: movie.summary,
                             thumbnails: [movie.medium_cover_image],
                             url: movie.torrents[0].url,
+                            hash: movie.torrents[0].hash,
                             extras: {
                                 torrents: movie.torrents
                             }

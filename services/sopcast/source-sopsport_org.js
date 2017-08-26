@@ -1,5 +1,7 @@
 (function () {
     const request = require("request");
+    const urlObject = require("url");
+
     var SopsportOrg = {
         name: "sopsport.org",
         find: function () {
@@ -20,7 +22,8 @@
                     var match = null;
                     var urls = [];
                     while (match = re.exec(body)) {
-                        urls.push(match[1]);
+                        var url = match[1];
+                        if (urls.indexOf(url) < 0) urls.push(url);
                     }
 
                     var index = -1;
@@ -32,12 +35,20 @@
                             return;
                         }
 
-                        request("http://sopsport.org/", function (error, response, body) {
+                        var url = urls[index];
+
+                        request(url, function (error, response, body) {
                             try {
                                 if (error || !response || response.statusCode != 200 || !body) return;
 
-                                var sopMatch = /<div class="sop_info"><a href="(sop:[^"]+)"/.match(body);
-                                if (!sopMatch) return;
+                                var sopURLs = ["sop://broker.sopcast.com:3912/263"]; //fake
+                                var sopRE = /<div class="sop_info"><a href="(sop:[^"]+)"/g;
+                                while (match = sopRE.exec(body)) {
+                                    var sopURL = match[1];
+                                    if (sopURLs.indexOf(url) < 0) sopURLs.push(sopURL);
+                                }
+
+                                if (sopURLs.length == 0) return;
 
                                 var content = {
                                     title: "",
@@ -45,14 +56,14 @@
                                     duration: null,
                                     description: "",
                                     thumbnails: [],
-                                    url: sopMatch[1],
+                                    url: sopURLs,
                                     extras: {}
                                 }
 
                                 var teamLogoRe = /<div class="logo_team"><img src="([^"]+)"/g;
                                 var match = null;
                                 while (match = teamLogoRe.exec(body)) {
-                                    content.thumbnails.push(match[1]);
+                                    content.thumbnails.push(urlObject.resolve(url, match[1]));
                                 }
 
                                 var teamNameRe = /<div class="name_team">([^<]+)</g;

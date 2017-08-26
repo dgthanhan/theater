@@ -1,6 +1,8 @@
 (function () {
 
     const {State} = require("../common.js");
+    const BaseService = require("../base-service.js");
+
     const {spawn} = require("child_process");
     const TorrentConverter = require("./torrent-converter.js");
 
@@ -14,6 +16,8 @@
     }
 
     TorrentService.TYPE = "torrent";
+
+    TorrentService.prototype = new BaseService();
 
     TorrentService.prototype.findAvailableContents = function () {
         var promises = [];

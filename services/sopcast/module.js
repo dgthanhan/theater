@@ -1,6 +1,7 @@
 (function () {
 
     const {State} = require("../common.js");
+    const BaseService = require("../base-service.js");
     const {spawn} = require("child_process");
     const SopcastConverter = require("./sopcast-converter.js");
 
@@ -14,6 +15,8 @@
     }
 
     SopcastService.TYPE = "sopcast";
+
+    SopcastService.prototype = new BaseService();
 
     SopcastService.prototype.findAvailableContents = function () {
         var promises = [];

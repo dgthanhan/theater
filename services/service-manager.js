@@ -37,6 +37,8 @@
             currentContent = content;
             activeService = service;
 
+            console.log("Content to play: ", content);
+
             if (!content) {
                 reject(new Error("Content not found"));
                 return;

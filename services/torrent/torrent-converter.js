@@ -13,7 +13,7 @@
 
     SopcastConverter.prototype.convert = function (url, options) {
         var thiz = this;
-        const peerflix = require("peerflix");
+        const peerflix = require("./flix2.js");
         const readTorrent = require("read-torrent");
 
         this.status = State.Preparing;
@@ -23,25 +23,29 @@
                 if (error) {
                     reject(error);
                 } else {
-                    var flix = null;
+                    var movieFileName = "";
+                    thiz.flix = null;
                     try {
-                        flix = peerflix(torrent, {});
+                        var largestFile = torrent.files.reduce(function (a, b) {
+                            return a.length > b.length ? a : b;
+                        });
+
+                        movieFileName = largestFile.name;
+
+                        thiz.flix = peerflix(torrent, {fileName: movieFileName});
                     } catch (e) {
                         reject(e);
                         return;
                     }
 
-                    console.log("Got flix", flix);
-
-                    flix.server.once('listening', function () {
+                    thiz.flix.server.once('listening', function () {
                         thiz.status = State.Serving;
-                        console.log("engine.server.address()", flix.server.address());
-                        var url = 'http://' + flix.server.address().address + ":" + flix.server.address().port + '/';
+                        var url = 'http://' + thiz.flix.server.address().address + ":" + thiz.flix.server.address().port + '/' + (movieFileName ? movieFileName : "");
                         console.log("Flix listening: " + url);
                         resolve(url);
                         console.log("Resolve called");
                     });
-                    flix.server.on('error', function (error) {
+                    thiz.flix.server.on('error', function (error) {
                         console.error(error);
                         reject(error);
                     });
@@ -51,6 +55,13 @@
     };
 
     SopcastConverter.prototype.destroy = function () {
+        if (!this.flix) {
+            try {
+                this.flix.server.close(function () {});
+                this.flix.destroy(function () {});
+                this.flix = null;
+            } catch (e) { }
+        }
     };
 
     module.exports = SopcastConverter;

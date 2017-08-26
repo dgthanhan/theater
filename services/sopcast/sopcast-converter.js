@@ -10,7 +10,7 @@
     const LOCAL_PORT = 12000;
     const PLAYER_PORT = 12001;
 
-    function waitForPort(port, maxWait) {
+    function waitForPort(port, maxWait, disappearing) {
         return new Promise(function (resolve, reject) {
             var count = maxWait || 10;
             var checker = function () {
@@ -21,7 +21,10 @@
                 }
 
                 exec("netstat -anp | grep tcp | grep LISTEN | grep " + port, function (error, stdout, stderr) {
-                    if (!error && stdout && stdout.indexOf(":" + port) >= 0) {
+                    var satisfied = stdout && stdout.indexOf(":" + port) >= 0;
+                    if (disappearing) satisfied = !satisfied;
+
+                    if (satisfied) {
                         resolve();
                     } else {
                         setTimeout(checker, 1000);
@@ -63,7 +66,63 @@
         });
     }
 
-    SopcastConverter.prototype.convert = function (url, options) {
+    SopcastConverter.prototype.convert = function (urls, options) {
+        if (!options) options = {};
+        var thiz = this;
+        return new Promise(function (resolve, reject) {
+            //TODO: sort urls by preference, try preferred URLs first
+            var index = -1;
+            var next = function () {
+                index ++;
+                if (index >= urls.length) {
+                    //all were tried without success, reporting an error now
+                    reject(new Error("Failed after trying all URLs."));
+                    return;
+                }
+
+                var url = urls[index];
+                console.log("Converting URL: " + url);
+                thiz._convertURL(url, options).then(function (streamURL) {
+                    resolve(streamURL);
+                }).catch(function (e) {
+                    console.error(e);
+                    next();
+                });
+            };
+
+            next();
+        });
+    };
+
+    SopcastConverter.prototype._convertURL = function (url, options) {
+        var thiz = this;
+        return new Promise(function(resolve, reject) {
+            var maxTries = (typeof(options.maxTries) === "number") ? options.maxTries : 5;
+            var count = -1;
+            var next = function () {
+                count ++;
+                console.log("count >= maxTries", count, maxTries);
+                if (count >= maxTries) {
+                    reject(new Error("Failed after " + maxTries + " tries."));
+                    return;
+                }
+
+                console.log("  >> Attempt #" + count + "...");
+
+                thiz._convertURLOnce(url, options).then(function (streamURL) {
+                    console.log("      >> SUCCEEDED!");
+                    resolve(streamURL);
+                }).catch(function (e) {
+                    console.log("      >> FAILED!");
+                    next();
+                });
+            };
+
+            next();
+        });
+    };
+
+    SopcastConverter.prototype._convertURLOnce = function (url, options) {
         var thiz = this;
 
         if (this.workerProcess) {
@@ -87,12 +146,22 @@
                     console.log("sp-sc-auth exited.");
                 });
 
-                waitForPort(PLAYER_PORT, 10).then(function () {
-                    setTimeout(function () {
-                        var streamURL = "http://" + INTERFACE + ":" + PLAYER_PORT + "/tv.asf";
-                        thiz.status = State.Serving;
-                        resolve(streamURL);
-                    }, 1000);
+                console.log("      Waiting for port to appear...");
+                waitForPort(PLAYER_PORT, 20).then(function () {
+                    console.log("      Port appeared, waiting for port to disappear...");
+                    waitForPort(PLAYER_PORT, 15, "disappearing").then(function () {
+                        //well, that's weird the port disappeared, reject it now
+                        console.log("      Port disappeared, report as failure.");
+                        reject(new Error("Port disappeared after started."));
+                    }).catch(function () {
+                        //ok, port looked good, it lasted for more than 10 seconds
+                        console.log("      Port NOT disappeared, report as success.");
+                        setTimeout(function () {
+                            var streamURL = "http://" + INTERFACE + ":" + PLAYER_PORT + "/tv.asf?token=" + (new Date().getTime());
+                            thiz.status = State.Serving;
+                            resolve(streamURL);
+                        }, 1000);
+                    });
                 }).catch(function (e) {
                     try {
                         thiz.workerProcess.removeAllListeners();

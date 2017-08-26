@@ -15,6 +15,7 @@ ContentItemView.prototype.setContent = function(content) {
     this.thumbnailList.innerHTML = "";
     for (var url of this.content.thumbnails) {
         var imageView = new ImageView().into(this.thumbnailList);
+        imageView.setCenterCrop(this.content.thumbnails.length == 1);
         imageView.setUrl(url);
     }
 };

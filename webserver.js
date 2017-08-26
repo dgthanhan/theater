@@ -30,9 +30,12 @@
 
         server.get("/api/contents", function (request, response) {
             var service = serviceManager.getService(request.query.service);
-            service.findAvailableContents().then(function (contents) {
+            var refresh = request.query.refresh == "true";
+            service.getContents({forceRefresh: refresh}).then(function (contents) {
+                console.log("Content returned for ", service.type, contents);
                 response.json(contents);
             }).catch(function (e) {
+                console.error(e);
                 response.status(500).send(e);
             });
         });

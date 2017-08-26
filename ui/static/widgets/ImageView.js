@@ -2,6 +2,8 @@ function ImageView() {
     BaseApplicationView.call(this);
     ImageView.instance = this;
 
+    this.centerCrop = true;
+
     this.bind("load", function () {
         console.log("WxH", this.image.naturalWidth, this.image.naturalHeight);
         var w = this.image.naturalWidth;
@@ -9,7 +11,7 @@ function ImageView() {
         var W = this.node().offsetWidth;
         var H = this.node().offsetHeight;
 
-        var r = Math.min(w / W, h / H);
+        var r = this.centerCrop ? Math.min(w / W, h / H) : Math.max(w / W, h / H);
         w = Math.round(w / r);
         h = Math.round(h / r);
 
@@ -25,7 +27,9 @@ function ImageView() {
 }
 
 __extend(BaseApplicationView, ImageView);
-
+ImageView.prototype.setCenterCrop = function(centerCrop) {
+    this.centerCrop = centerCrop;
+};
 ImageView.prototype.setUrl = function(url) {
     window.setTimeout(function () {
         this.image.style.display = "none";
