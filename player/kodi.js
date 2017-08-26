@@ -67,6 +67,18 @@
             }).catch(reject);
         });
     };
+    KodiController.prototype.showNotification = function (title, message) {
+        return this._get({
+            jsonrpc: "2.0",
+            id: "1",
+            method: "GUI.ShowNotification",
+            params: {
+                title: title || "Theater",
+                message: message
+            }
+        });
+    };
+
 
     module.exports = KodiController;
 })();

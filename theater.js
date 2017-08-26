@@ -10,6 +10,7 @@
 
         webServer.setPlayer(player);
         webServer.start();
+        player.showNotification("Theater", "Theater application started and is ready now. Enjoy your P2P channels!");
     }
 
     module.exports = main;
