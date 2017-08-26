@@ -30,32 +30,33 @@
     };
     Manager.play = function (type, url) {
         return new Promise(function (resolve, reject) {
-            var service = Manager.getService(type);
-            console.log("Playing: ", url, service.type);
-
-            var content = service.findCachedContent(url);
-            currentContent = content;
-            activeService = service;
-
-            console.log("Content to play: ", content);
-
-            if (!content) {
-                reject(new Error("Content not found"));
-                return;
-            } else {
-                resolve();
-            }
-
-            playbackOK = true;
-            playbackMessage = "Resolving media..";
+            playbackMessage = "Stopping player...";
             sayStatusChanged();
 
-            service.start(content).then(function (resolvedContent) {
-                resolvedURL = resolvedContent.url;
-                playbackMessage = "Stopping player...";
+            player.stop().then(function() {
+                var service = Manager.getService(type);
+                console.log("Playing: ", url, service.type);
+
+                var content = service.findCachedContent(url);
+                currentContent = content;
+                activeService = service;
+
+                console.log("Content to play: ", content);
+
+                if (!content) {
+                    reject(new Error("Content not found"));
+                    return;
+                } else {
+                    resolve();
+                }
+
+                playbackOK = true;
+                playbackMessage = "Resolving media..";
                 sayStatusChanged();
-                player.stop().then(function() {
-                    playbackMessage = "Sending message to player...";
+
+                service.start(content).then(function (resolvedContent) {
+                    resolvedURL = resolvedContent.url;
+                    playbackMessage = "Sending media to player...";
                     sayStatusChanged();
                     player.play(resolvedContent.url).then(function () {
                         playbackMessage = "Media sent to player";
@@ -67,12 +68,12 @@
                     });
                 }).catch(function (e) {
                     playbackOK = false;
-                    playbackMessage = "Failed to stop current playback: " + e;
+                    playbackMessage = "Unable to resolve media to playable stream using backend: " + e;
                     sayStatusChanged();
                 });
             }).catch(function (e) {
                 playbackOK = false;
-                playbackMessage = "Unable to resolve media to playable stream using backend: " + e;
+                playbackMessage = "Failed to stop current playback: " + e;
                 sayStatusChanged();
             });
         });

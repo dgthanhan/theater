@@ -164,10 +164,6 @@
                         }, 1000);
                     });
                 }).catch(function (e) {
-                    try {
-                        thiz.workerProcess.removeAllListeners();
-                        thiz.workerProcess.kill("SIGKILL");
-                    } catch (e) {}
                     thiz.status = State.Idle;
                     reject(new Error("Failed to wait for sopcast." + e));
                 });
