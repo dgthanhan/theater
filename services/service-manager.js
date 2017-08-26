@@ -53,6 +53,8 @@
                     resolve();
                 }
 
+                player.showNotification("Theater", "Theater is prearing channel: '" + content.title + "'. Sit back and relax please!");
+
                 playbackOK = true;
                 playbackMessage = "Resolving media..";
                 sayStatusChanged();
