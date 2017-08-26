@@ -41,7 +41,7 @@
                             try {
                                 if (error || !response || response.statusCode != 200 || !body) return;
 
-                                var sopURLs = ["sop://broker.sopcast.com:3912/263"]; //fake
+                                var sopURLs = [];
                                 var sopRE = /<div class="sop_info"><a href="(sop:[^"]+)"/g;
                                 while (match = sopRE.exec(body)) {
                                     var sopURL = match[1];
