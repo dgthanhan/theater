@@ -172,12 +172,7 @@
     };
 
     SopcastConverter.prototype.destroy = function () {
-        if (this.workerProcess) {
-            try {
-                this.workerProcess.removeAllListeners();
-                this.workerProcess.kill("SIGKILL");
-            } catch (e) {}
-        }
+        killAllBackends();
     };
 
     module.exports = SopcastConverter;

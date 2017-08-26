@@ -34,6 +34,9 @@
             sayStatusChanged();
 
             player.stop().then(function() {
+                for (var s of services) {
+                    if (s.type != type) s.terminate();
+                }
                 var service = Manager.getService(type);
                 console.log("Playing: ", url, service.type);
 
