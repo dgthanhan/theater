@@ -19,11 +19,11 @@
 
     TorrentService.prototype = new BaseService();
 
-    TorrentService.prototype.findAvailableContents = function () {
+    TorrentService.prototype.findAvailableContents = function (options) {
         var promises = [];
         var contents = [];
         for (var source of this.sources) {
-            var promise = source.find().then(function(items) {
+            var promise = source.find(options).then(function(items) {
                 contents = contents.concat(items);
             });
             promises.push(promise);

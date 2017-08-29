@@ -18,7 +18,7 @@
 
     SopcastService.prototype = new BaseService();
 
-    SopcastService.prototype.findAvailableContents = function () {
+    SopcastService.prototype.findAvailableContents = function (options) {
         var promises = [];
         var contents = [];
         for (var source of this.sources) {
