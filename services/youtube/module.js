@@ -26,11 +26,7 @@
             });
         });
     };
-    YoutubeService.prototype.getFilterOptions = function() {
-      return {
-          sortBy: ["date", "rating", "relevance", "title", "viewCount"]
-      }
-    }
+
     YoutubeService.prototype.findAvailableContents = function (options) {
         var promises = [];
         var contents = [];
@@ -78,5 +74,27 @@
     YoutubeService.prototype.terminate = function () {
         this.state = State.Idle;
     };
+    YoutubeService.prototype.getSearchFilterOptions = function() {
+        return {
+          searchable: true,
+          genre:  [
+                    {name: "Any",    type: "any"},
+                    {name: "Eposide", type: "eposide"},
+                    {name: "Movie", type: "movie"}
+                  ],
+          sortBy: [
+                    {name: "Relevance",   type: "relevance"},
+                    {name: "Date Added",  type: "date"},
+                    {name: "Title",       type: "title"},
+                    {name: "Rating",      type: "rating"},
+                    {name: "View Count",  type: "viewCount"}
+                  ],
+          quality: [
+                    {name: "Any",     type: "any"},
+                    {name: "Standard",type: "standard"},
+                    {name: "High",    type: "high"},
+                  ]
+        };
+    }
     module.exports = new YoutubeService();
 })();

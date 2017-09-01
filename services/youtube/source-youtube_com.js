@@ -10,23 +10,28 @@
                     reject(new Error("Empty search key"));
                     return;
                 }
-                var quality = options.quality || "";
-                var genre = options.genre || "";
                 var url = "https://www.googleapis.com/youtube/v3/search?q=" + keyword + "&part=snippet&key=AIzaSyA94gwn5hghSfnrqBuKEWnrM_UcEwnrowI"
-                url += "&type=video";
-                if (quality.length > 0) {
-                    var k = (quality === "1080p" || quality === "720p") ? "high" : "any";
-                    url = url + "&videoDefinition=" + k;
+
+                var genre = options.genre || "";
+                if (genre.length > 0 ) {
+                    url += "&type=" + genre;
                 }
+
+                var quality = options.quality || "";
+                
+                if (quality.length > 0 && genre === "video") {
+                    url += "&videoDefinition=" + quality
+                }
+
                 var limit = options.limit || 10;
                 url += "&maxResults=" + limit;
-                var pageToken = options.page || "";
-                var orderBy = options.orderBy || "";
-                if (orderBy.length > 0) {
 
+                var sortBy = options.sortBy || "";
+                if (sortBy.length > 0) {
+                    url += "&order=" + sortBy;
                 }
-                url += "&limit=" + limit;
 
+                var pageToken = options.page || "";
                 if (pageToken.length > 0) {
                     url += "&pageToken=" + pageToken;
                 }

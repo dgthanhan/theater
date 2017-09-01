@@ -3,6 +3,9 @@
         @searchBox {
             padding: 1em;
         }
+        .Disabled {
+            visibility: collapse;
+        }
         @searchTermBox {
             padding-left: 1em;
             padding-right: 1em;
@@ -18,11 +21,11 @@
         }
     </style>
     <vbox anon-id="searchBox">
-        <hbox>
+        <hbox flex="1">
             <ui:ComboManager flex="1" anon-id="mediaSourceManager"/>
             <ui:ComboManager flex="1" anon-id="genreManager"/>
         </hbox>
-        <hbox>
+        <hbox anon-id="filterBox" flex="1">
          <ui:ComboManager flex="1" anon-id="qualityManager"/>
          <ui:ComboManager flex="1" anon-id="sortByManager"/>
        </hbox>

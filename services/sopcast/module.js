@@ -18,6 +18,14 @@
 
     SopcastService.prototype = new BaseService();
 
+    SopcastService.prototype.getSearchFilterOptions = function() {
+        return {
+          searchable: false,
+          genre: [],
+          sortBy: [],
+          quality: []
+        };
+    }
     SopcastService.prototype.findAvailableContents = function (options) {
         var promises = [];
         var contents = [];

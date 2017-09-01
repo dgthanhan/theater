@@ -83,8 +83,8 @@ ComboManager.prototype.selectItem = function (item, fromUserAction) {
     }
     this.selectedItem = item;
     if (fromUserAction) {
-        Dom.emitEvent("p:ItemSelected", this.node(), {});
         this.popup.hide();
+        this.fireSelectionEvent(fromUserAction);
     }
 };
 

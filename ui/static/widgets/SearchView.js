@@ -13,13 +13,24 @@ function SearchView() {
     this.mediaSourceManager.renderer = function(source) {
         return source.name;
     }
+    this.mediaSourceManager.options = {
+        onItemSelected: function(fromUserAction) {
+              if (!fromUserAction) return;
+              var s = SearchView.instance.mediaSourceManager.getSelectedItem();
+              console.log(s);
+              SearchView.instance.selectSource(s);
+        }
+    }
     this.genreManager.renderer = function(genre, forSelectedItem) {
+      if (!genre) return "";
       return forSelectedItem ?  "Genre: " + genre.name : genre.name;
     }
     this.qualityManager.renderer = function(quality, forSelectedItem) {
+      if (!quality) return "";
       return forSelectedItem ? "Video Quality: " + quality.name : quality.name;
     }
     this.sortByManager.renderer = function(sortBy, forSelectedItem) {
+      if (!sortBy) return "";
       return forSelectedItem ? "Sort by: " +  sortBy.name : sortBy.name;
     }
 }
@@ -30,72 +41,64 @@ SearchView.prototype.onAttached = function() {
     var appView = AppView.instance;
     var thiz = this;
 
-    this.genreManager.setItems([{name: "All Genre", type: ""},
-                              {name: "Action", type: "Action"},
-                              {name: "Animation", type: "Animation"},
-                              {name: "Advanture", type: "Advanture"},
-                              {name: "Biography", type: "Biography"},
-                              {name: "Comedy", type: "Comedy"},
-                              {name: "Crime", type: "Crime"},
-                              {name: "Documentary", type: "Documentary"},
-                              {name: "Drama", type: "Drama"},
-                              {name: "Family", type: "Family"},
-                              {name: "Fantasy", type: "Fantasy"},
-                              {name: "Film-Noir", type: "Film-Noir"},
-                              {name: "History", type: "History"},
-                              {name: "Horror", type: "Horror"},
-                              {name: "Music", type: "Music"},
-                              {name: "Musical", type: "Musical"},
-                              {name: "Mystery", type: "Mystery"},
-                              {name: "Romance", type: "Romance"},
-                              {name: "Sci-Fi", type: "Sci-Fi"},
-                              {name: "Sport", type: "Sport"},
-                              {name: "Thriller", type: "Thriller"},
-                              {name: "War", type: "War"},
-                              {name: "Western", type: "Western"}]);
-
-    this.qualityManager.setItems([{name: "All Quality", type: ""},
-                                  {name: "HD 720p", type: "720p"},
-                                  {name: "HD 1080p", type: "1080p"},
-                                  {name: "3D", type: "3D"}]);
-
-    this.sortByManager.setItems([
-      {type: "date_added", name : "Date Added" },
-      {type: "title", name: "Title"},
-      {type: "year", name: "Year"},
-      {type: "rating", name :"Rating" }]);
-
-
     API.get("/api/services").then(function (services) {
-        var items = [];
-        items.push({name: "All services"});
 
         appView.services = services;
-        thiz.mediaSourceManager.setItems(items.concat(services));
+        thiz.mediaSourceManager.setItems(services);
 
-        thiz.search();
+        thiz.selectSource(thiz.mediaSourceManager.getSelectedItem());
 
     });
 };
+SearchView.prototype.selectSource = function(service) {
+    var thiz = this;
+    API.get("/api/search/options", {
+      service: service.type
+    }).then(function(options) {
+          var searchable = options.searchable || false;
+          if (searchable) {
+              thiz.genreManager.setItems(options.genre || []);
+              thiz.qualityManager.setItems(options.quality || []);
+              thiz.sortByManager.setItems(options.sortBy || []);
+          }
+          thiz.setEnabled(searchable);
+
+          thiz.search();
+    });
+}
+SearchView.prototype.setEnabled = function(searchable) {
+    console.log("Search able " + searchable);
+    if (!searchable) {
+        Dom.addClass(this.genreManager.node(), "Disabled");
+        Dom.addClass(this.qualityManager.node(), "Disabled");
+        Dom.addClass(this.sortByManager.node(), "Disabled");
+        Dom.addClass(this.searchTermBox, "Disabled");
+        Dom.addClass(this.filterBox, "Disabled");
+    } else {
+        Dom.removeClass(this.genreManager.node(), "Disabled");
+        Dom.removeClass(this.qualityManager.node(),  "Disabled");
+        Dom.removeClass(this.sortByManager.node(), "Disabled");
+        Dom.removeClass(this.searchTermBox, "Disabled");
+        Dom.removeClass(this.filterBox, "Disabled");
+    }
+}
+
 SearchView.prototype.getCurrenSearchOptions = function() {
     var options = {
       term:  this.searchText.value,
       genre: this.genreManager.getSelectedItem() == null ? '' : this.genreManager.getSelectedItem().type,
-      quality: this.qualityManager.getSelectedItem().type == null ? '' : this.qualityManager.getSelectedItem().type,
+      quality: this.qualityManager.getSelectedItem() == null ? '' : this.qualityManager.getSelectedItem().type,
       sortBy: this.sortByManager.getSelectedItem() == null ? '' : this.sortByManager.getSelectedItem().type,
       orderBy: "desc",
       limit: 10
     }
     return options;
 }
+
 SearchView.prototype.search = function() {
     var options = this.getCurrenSearchOptions();
     var service = this.mediaSourceManager.getSelectedItem();
     var appView = AppView.instance;
     appView.allContentListView.innerHTML = "";
-    if (service.name === "All services") {
-        appView.init(options, appView.services);
-    } else {
-        appView.load(options, service);
-    }
+    appView.load(options, service);
 }

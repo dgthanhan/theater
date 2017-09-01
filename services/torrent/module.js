@@ -94,6 +94,47 @@
     TorrentService.prototype.getCurrentStatus = function () {
         return this.converter ? this.converter.status : State.Idle;
     };
-
+    TorrentService.prototype.getSearchFilterOptions = function() {
+        return {
+          searchable: true,
+          genre: [
+                    {name: "All Genre", type: ""},
+                    {name: "Action",    type: "Action"},
+                    {name: "Animation", type: "Animation"},
+                    {name: "Advanture", type: "Advanture"},
+                    {name: "Biography", type: "Biography"},
+                    {name: "Comedy",    type: "Comedy"},
+                    {name: "Crime",     type: "Crime"},
+                    {name: "Documentary", type: "Documentary"},
+                    {name: "Drama",     type: "Drama"},
+                    {name: "Family",    type: "Family"},
+                    {name: "Fantasy",   type: "Fantasy"},
+                    {name: "Film-Noir", type: "Film-Noir"},
+                    {name: "History",   type: "History"},
+                    {name: "Horror",    type: "Horror"},
+                    {name: "Music",     type: "Music"},
+                    {name: "Musical",   type: "Musical"},
+                    {name: "Mystery",   type: "Mystery"},
+                    {name: "Romance",   type: "Romance"},
+                    {name: "Sci-Fi",    type: "Sci-Fi"},
+                    {name: "Sport",     type: "Sport"},
+                    {name: "Thriller",  type: "Thriller"},
+                    {name: "War",       type: "War"},
+                    {name: "Western",   type: "Western"}
+                  ],
+          sortBy: [
+                    {name: "Date Added",  type: "date_added"},
+                    {name: "Title",       type: "title"},
+                    {name: "Year",        type: "year"},
+                    {name: "Rating",      type: "rating"}
+                  ],
+          quality: [
+                    {name: "All Quality", type: ""},
+                    {name: "HD 720p",     type: "720p"},
+                    {name: "HD 1080p",    type: "1080p"},
+                    {name: "3D",          type: "3D"}
+                  ]
+        };
+    }
     module.exports = new TorrentService();
 })();

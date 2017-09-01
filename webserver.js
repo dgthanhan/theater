@@ -56,6 +56,12 @@
             });
         });
 
+        server.get("/api/search/options", function (request, response) {
+            var service = serviceManager.getService(request.query.service);
+            var options = service.getSearchFilterOptions();
+            response.json(options);
+        });
+
         server.get("/api/play", function (request, response) {
             serviceManager.play(request.query.service, request.query.url).then(function () {
                 response.json({message: "OK"})
