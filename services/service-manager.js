@@ -101,7 +101,7 @@
             status.service = {
                 type: activeService.type,
                 name: activeService.name,
-                status: activeService.getCurrentStatus()
+                status: activeService.getCurrentStatus ? activeService.getCurrentStatus() : ""
             };
         }
 

@@ -1,10 +1,11 @@
 (function () {
-
+    const {State} = require("../common.js");
     const BaseService = require("../base-service.js");
 
     function YoutubeService() {
         this.type = YoutubeService.TYPE;
         this.name = "Youtube";
+        this.state = State.Idle;
         this.sources = [
             require("./source-youtube_com.js")
         ];
@@ -15,6 +16,9 @@
     YoutubeService.prototype.start = function (content) {
         var thiz = this;
         return new Promise(function (resolve, reject) {
+
+            thiz.state = State.Serving;
+
             resolve({
                 url: content.isPlaylist ? "plugin://plugin.video.youtube/?path=/root/video&action=play_all&playlist=" + content.extras.id :
                  "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=" + content.extras.id,
@@ -47,6 +51,7 @@
                     if (!c.type || c.type === "" || typeof(c.type) === "undefined") {
                         c.type = YoutubeService.TYPE;
                     }
+                    thiz.cache[c.url] = c;
                 }
                 resolve(contents);
             }).catch(function (e) {
@@ -66,6 +71,12 @@
             url: url,
             extras: {}
         };
+    };
+    YoutubeService.prototype.getCurrentStatus = function () {
+        return this.state;
+    };
+    YoutubeService.prototype.terminate = function () {
+        this.state = State.Idle;
     };
     module.exports = new YoutubeService();
 })();

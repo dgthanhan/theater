@@ -4,6 +4,11 @@ function SearchView() {
     SearchView.instance = this;
 
     this.bind("click", this.search, this.searchButton);
+    this.bind("keyup", function(e){
+        if (e.keyCode == 13) {
+            SearchView.instance.search();
+        }
+    }, this.searchText);
 
     this.mediaSourceManager.renderer = function(source) {
         return source.name;

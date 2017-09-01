@@ -1,27 +1,32 @@
 <vbox>
     <style>
-        @searchBox, @searchTermBox {
-          padding-left: 1em;
-          padding-right: 1em;
-          padding-top: 1em;
+        @searchBox {
+            padding: 1em;
         }
-        @searchTermBox button, @sortByManager {
+        @searchTermBox {
+            padding-left: 1em;
+            padding-right: 1em;
+        }
+        @searchBox hbox:last-child {
+          margin-top: 0.5em;
+        }
+        @searchTermBox button {
           margin-left: 0.5em;
         }
-        @mediaSourceManager {
-          margin-right: 0.5em;
-        }
-        @genreManager, @qualityManager {
+        @genreManager, @sortByManager{
           margin-left: 0.5em;
-          margin-right: 0.5em;
         }
     </style>
-    <hbox anon-id="searchBox">
-       <ui:ComboManager anon-id="mediaSourceManager"/>
-       <ui:ComboManager anon-id="genreManager"/>
-       <ui:ComboManager anon-id="qualityManager"/>
-       <ui:ComboManager anon-id="sortByManager"/>
-    </hbox>
+    <vbox anon-id="searchBox">
+        <hbox>
+            <ui:ComboManager flex="1" anon-id="mediaSourceManager"/>
+            <ui:ComboManager flex="1" anon-id="genreManager"/>
+        </hbox>
+        <hbox>
+         <ui:ComboManager flex="1" anon-id="qualityManager"/>
+         <ui:ComboManager flex="1" anon-id="sortByManager"/>
+       </hbox>
+    </vbox>
     <hbox anon-id="searchTermBox">
         <hbox flex="1" ><input anon-id="searchText" flex="1" type="text" placeholder="Search everything..."/></hbox>
         <button type="button" anon-id="searchButton"><i class="mdi mdi-magnify" /></button>
