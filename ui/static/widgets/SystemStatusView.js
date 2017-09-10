@@ -11,6 +11,10 @@ function SystemStatusView() {
     this.ws.onmessage = function (messageEvent) {
         thiz.setStatus(JSON.parse(messageEvent.data));
     };
+
+    this.bind("click", function () {
+        new SystemStatusDialog().open(this.status);
+    }, this.backendDetailButton);
 }
 
 __extend(BaseApplicationView, SystemStatusView);
@@ -20,6 +24,8 @@ SystemStatusView.prototype.setUrl = function(url) {
     this.image.src = url;
 };
 SystemStatusView.prototype.setStatus = function (status) {
+    this.status = status;
+    console.log(status);
     this.thumbnailList.innerHTML = "";
     if (status.content) {
         for (var url of status.content.thumbnails) {
@@ -43,8 +49,10 @@ SystemStatusView.prototype.setStatus = function (status) {
         Dom.setInnerText(this.playbackStatusMessage, status.playbackMessage);
         this.playbackStatusPane.style.visibility = "inherit";
         this.playbackStatusPane.setAttribute("status", status.service.status);
+        Dom.setInnerText(this.backendStatusMessage, status.service.backend ? status.service.backend.message : "");
     } else {
         this.playbackStatusMessage.innerHTML = "&#160;";
         this.playbackStatusPane.style.visibility = "hidden";
+        this.backendStatusMessage.innerHTML = "&#160;";
     }
 }

@@ -47,52 +47,8 @@
             });
         });
     };
-
-    TorrentService.prototype.start = function (content) {
-        var thiz = this;
-
-        return new Promise(function (resolve, reject) {
-            if (thiz.converter) {
-                try {
-                    thiz.converter.destroy();
-                } catch (e) {}
-            } else {
-                thiz.converter = new TorrentConverter();
-            }
-
-            thiz.converter.convert(content.url).then(function (url) {
-                resolve({
-                    url: url,
-                    content: content
-                })
-            }).catch(function (e) {
-                reject(e);
-            });
-        });
-    };
-    TorrentService.prototype.terminate = function () {
-        if (this.converter) {
-            try {
-                this.converter.destroy();
-            } catch (e) {}
-        }
-    };
-
-    TorrentService.prototype.findCachedContent = function (url) {
-        return this.cache ? this.cache[url] : {
-            title: url,
-            contentType: "video",
-            type: TorrentService.TYPE,
-            duration: null,
-            description: "",
-            thumbnails: [],
-            url: url,
-            extras: {}
-        };
-    };
-
-    TorrentService.prototype.getCurrentStatus = function () {
-        return this.converter ? this.converter.status : State.Idle;
+    TorrentService.prototype.createConverter = function (content) {
+        return new TorrentConverter();
     };
 
     module.exports = new TorrentService();

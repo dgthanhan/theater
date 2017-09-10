@@ -30,9 +30,14 @@
             font-size: 0.9em;
             max-height: 3.6em;
         }
-        @playbackStatusPane {
+
+        @infoControlPane {
             margin-top: 1em;
-            justify-content: center;
+            align-items: center;
+            border-top: solid 1px rgba(255, 255, 255, 0.1);
+            padding-top: 1em;
+        }
+        @playbackStatusPane {
         }
         @originalLink {
             font-size: 0.85em;
@@ -40,11 +45,11 @@
         }
 
         @playbackStatusPane {
-            align-items: center;;
+            align-items: center;
         }
         @playbackStatusPane > i {
             font-size: 1.3em;
-            margin-right: 0.7em;
+            margin-right: 0.5em;
             display: none;
         }
         @playbackStatusPane[status='idle'] > @idleIndicator {
@@ -66,6 +71,22 @@
         @playbackStatusPane[status='serving'] {
             color: #7F7;
         }
+
+        @backendStatusMessage {
+            font-size: 0.85em;
+            opacity: 0.5;
+        }
+        @backendDetailButton > i {
+            line-height: 2em;
+            color: #FFF;
+        }
+        @backendDetailButton {
+            width: 2em;
+            padding: 0em;
+            display: inline-block;
+            background: transparent;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
     </style>
     <hbox anon-id="currentContentPane">
         <hbox anon-id="thumbnailList"></hbox>
@@ -75,10 +96,18 @@
             <a anon-id="originalLink"></a>
         </vbox>
     </hbox>
-    <hbox anon-id="playbackStatusPane">
-        <i anon-id="idleIndicator" class="mdi mdi-radiobox-blank" />
-        <i anon-id="preparingIndicator" class="mdi mdi-run" />
-        <i anon-id="servingIndicator" class="mdi mdi-cast-connected" />
-        <div anon-id="playbackStatusMessage"></div>
+    <hbox anon-id="infoControlPane">
+        <vbox flex="1">
+            <hbox anon-id="playbackStatusPane">
+                <i anon-id="idleIndicator" class="mdi mdi-radiobox-blank" />
+                <i anon-id="preparingIndicator" class="mdi mdi-run" />
+                <i anon-id="servingIndicator" class="mdi mdi-cast-connected" />
+                <div anon-id="playbackStatusMessage"></div>
+            </hbox>
+            <hbox anon-id="backendStatusPane">
+                <div anon-id="backendStatusMessage"></div>
+            </hbox>
+        </vbox>
+        <button anon-id="backendDetailButton"><i class="mdi mdi-dots-vertical" /></button>
     </hbox>
 </vbox>

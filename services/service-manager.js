@@ -69,16 +69,41 @@
                     }).catch(function (e) {
                         playbackOK = false;
                         playbackMessage = "Failed to play on player: " + e;
+                        console.error(e);
                         sayStatusChanged();
                     });
                 }).catch(function (e) {
                     playbackOK = false;
                     playbackMessage = "Unable to resolve media to playable stream using backend: " + e;
+                    console.error(e);
                     sayStatusChanged();
                 });
             }).catch(function (e) {
                 playbackOK = false;
                 playbackMessage = "Failed to stop current playback: " + e;
+                console.error(e);
+                sayStatusChanged();
+            });
+        });
+    };
+
+    Manager.resendPlayback = function () {
+        return new Promise(function (resolve, reject) {
+            if (!resolvedURL) {
+                reject(new Error("No URL"));
+                return;
+            }
+            resolve();
+
+            playbackMessage = "Sending media to player...";
+            sayStatusChanged();
+            player.play(resolvedURL).then(function () {
+                playbackMessage = "Media sent to player";
+                sayStatusChanged();
+            }).catch(function (e) {
+                playbackOK = false;
+                playbackMessage = "Failed to play on player: " + e;
+                console.error(e);
                 sayStatusChanged();
             });
         });
@@ -101,7 +126,8 @@
             status.service = {
                 type: activeService.type,
                 name: activeService.name,
-                status: activeService.getCurrentStatus()
+                status: activeService.getCurrentStatus(),
+                backend: activeService.getBackendStatus()
             };
         }
 
@@ -112,6 +138,9 @@
     };
     Manager.setPlayer = function (providedPlayer) {
         player = providedPlayer;
+    };
+    Manager.notifyStatusChange = function () {
+        sayStatusChanged();
     };
 
     module.exports = Manager;

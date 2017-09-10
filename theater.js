@@ -2,8 +2,13 @@
     const webServer = require("./webserver.js");
     const KodiController = require("./player/kodi.js");
     const serviceManager = require("./services/service-manager.js");
+    const discovery = require("./discovery.js");
+
+
 
     function main() {
+        discovery.start();
+
         var player = new KodiController(13000);
 
         serviceManager.setPlayer(player);
