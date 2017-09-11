@@ -1,8 +1,10 @@
 (function () {
     const {State} = require("../common.js");
 
-    function SopcastConverter() {
+    function TorrentConverter() {
         this.status = State.Idle;
+        this.message = "";
+        this.url = null;
     }
 
     function killAllBackends() {
@@ -11,7 +13,7 @@
         });
     }
 
-    SopcastConverter.prototype.convert = function (url, options) {
+    TorrentConverter.prototype.convert = function (url, options) {
         var thiz = this;
         const peerflix = require("./flix2.js");
         const readTorrent = require("read-torrent");
@@ -54,7 +56,7 @@
         });
     };
 
-    SopcastConverter.prototype.destroy = function () {
+    TorrentConverter.prototype.destroy = function () {
         if (!this.flix) {
             try {
                 this.flix.server.close(function () {});
@@ -64,5 +66,14 @@
         }
     };
 
-    module.exports = SopcastConverter;
+    TorrentConverter.prototype.getFullStatus = function () {
+        return {
+            status: this.status,
+            message: this.message,
+            url: this.url,
+
+        }
+    };
+
+    module.exports = TorrentConverter;
 })();

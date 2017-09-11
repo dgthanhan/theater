@@ -1,0 +1,41 @@
+<vbox>
+    <style>
+        @this {
+        }
+        @streamURL {
+            font-size: 0.85em;
+        }
+        @this > * + * {
+            margin-top: 1em;
+        }
+
+        .Info > span {
+            opacity: 0.5;
+        }
+
+        @controlPane > button:not(:last-child) {
+            border-top-right-radius: 0em;
+            border-bottom-right-radius: 0em;
+        }
+        @controlPane > button:not(:first-child) {
+            border-top-left-radius: 0em;
+            border-bottom-left-radius: 0em;
+        }
+        @controlPane > button + button {
+
+        }
+    </style>
+    <vbox class="Info">
+        <span>Stream URL:</span>
+        <strong anon-id="streamURL"></strong>
+    </vbox>
+    <vbox class="Info">
+        <span>Backend status:</span>
+        <div anon-id="backendStatus"></div>
+    </vbox>
+    <hbox anon-id="controlPane">
+        <button anon-id="killButton" flex="1"><i class="mdi mdi-stop" /> Stop</button>
+        <button anon-id="playButton" flex="1"><i class="mdi mdi-play" /> Play</button>
+        <button anon-id="fixButton" flex="1"><i class="mdi mdi-auto-fix" /> Fix</button>
+    </hbox>
+</vbox>

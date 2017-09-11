@@ -66,6 +66,15 @@
             serviceManager.play(request.query.service, request.query.url).then(function () {
                 response.json({message: "OK"})
             }).catch (function () {
+                console.error(e);
+                response.status(500).send(e);
+            });
+        });
+        server.get("/api/replay", function (request, response) {
+            serviceManager.resendPlayback().then(function () {
+                response.json({message: "OK"})
+            }).catch (function () {
+                console.error(e);
                 response.status(500).send(e);
             });
         });

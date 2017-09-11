@@ -1,12 +1,13 @@
 (function () {
-    const {State} = require("../common.js");
+    const {State, findLANAddress} = require("../common.js");
     const {spawn, exec} = require("child_process");
 
     function SopcastConverter() {
         this.status = State.Idle;
+        this.message = "";
+        this.url = null;
     }
 
-    const INTERFACE = "127.0.0.1";
     const LOCAL_PORT = 12000;
     const PLAYER_PORT = 12001;
 
@@ -67,6 +68,14 @@
         });
     }
 
+    SopcastConverter.prototype._updateStatusMessage = function (message, status, url) {
+        this.message = message;
+        if (typeof(status) != "undefined") this.status = status;
+        if (typeof(url) != "undefined") this.url = url;
+        var manager = require("../service-manager.js");
+        manager.notifyStatusChange();
+    };
+
     SopcastConverter.prototype.convert = function (urls, options) {
         if (!options) options = {};
         var thiz = this;
@@ -78,12 +87,16 @@
                 if (index >= urls.length) {
                     //all were tried without success, reporting an error now
                     reject(new Error("Failed after trying all URLs."));
+                    thiz._updateStatusMessage("Failed after trying all URLs.");
                     return;
                 }
 
                 var url = urls[index];
                 console.log("Converting URL: " + url);
+                thiz._updateStatusMessage("Trying URL: " + url);
                 thiz._convertURL(url, options).then(function (streamURL) {
+                    thiz.url = streamURL;
+                    thiz._updateStatusMessage("Successfully created the video stream.");
                     resolve(streamURL);
                 }).catch(function (e) {
                     console.error(e);
@@ -101,6 +114,7 @@
             var maxTries = (typeof(options.maxTries) === "number") ? options.maxTries : 5;
             var count = -1;
             var next = function () {
+                if (thiz.destroyed) return;
                 count ++;
                 console.log("count >= maxTries", count, maxTries);
                 if (count >= maxTries) {
@@ -109,6 +123,8 @@
                 }
 
                 console.log("  >> Attempt #" + count + "...");
+
+                thiz._updateStatusMessage("Trying URL: " + url + " (attempt #" + count + " of " + maxTries + ")");
 
                 thiz._convertURLOnce(url, options).then(function (streamURL) {
                     console.log("      >> SUCCEEDED!");
@@ -145,20 +161,26 @@
                     thiz.status = State.Idle;
                     thiz.workerProcess = null;
                     console.log("sp-sc-auth exited.");
+                    thiz.url = null;
+                    thiz._updateStatusMessage("Backend process exited.");
                 });
 
                 console.log("      Waiting for port to appear...");
                 waitForPort(PLAYER_PORT, 20).then(function () {
+                    if (thiz.destroyed) return;
                     console.log("      Port appeared, waiting for port to disappear...");
                     waitForPort(PLAYER_PORT, 15, "disappearing").then(function () {
+                        if (thiz.destroyed) return;
                         //well, that's weird the port disappeared, reject it now
                         console.log("      Port disappeared, report as failure.");
                         reject(new Error("Port disappeared after started."));
                     }).catch(function () {
+                        if (thiz.destroyed) return;
                         //ok, port looked good, it lasted for more than 10 seconds
                         console.log("      Port NOT disappeared, report as success.");
                         setTimeout(function () {
-                            var streamURL = "http://" + INTERFACE + ":" + PLAYER_PORT + "/tv.asf?token=" + (new Date().getTime());
+                            var ip = findLANAddress();
+                            var streamURL = "http://" + ip + ":" + PLAYER_PORT + "/tv.asf?token=" + (new Date().getTime());
                             thiz.status = State.Serving;
                             resolve(streamURL);
                         }, 1000);
@@ -170,9 +192,22 @@
             });
         });
     };
+    SopcastConverter.prototype.getDetailedMessage = function () {
+        if (!this.workerProcess) return "No backend process.";
+        return "Backend process running at pid " + this.workerProcess.pid;
+    };
+    SopcastConverter.prototype.getFullStatus = function () {
+        return {
+            status: this.status,
+            message: this.message,
+            url: this.url,
+            details: this.getDetailedMessage()
+        }
+    };
 
     SopcastConverter.prototype.destroy = function () {
         killAllBackends();
+        this.destroyed = true;
     };
 
     module.exports = SopcastConverter;

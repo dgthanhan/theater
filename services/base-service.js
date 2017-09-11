@@ -15,4 +15,54 @@ BaseService.prototype.getContents = function (options) {
     }.bind(this));
 };
 
+BaseService.prototype.start = function (content) {
+    var thiz = this;
+
+    return new Promise(function (resolve, reject) {
+        if (thiz.converter) {
+            try {
+                thiz.converter.destroy();
+            } catch (e) {}
+        } else {
+            thiz.converter = thiz.createConverter();
+        }
+
+        thiz.converter.convert(content.url).then(function (url) {
+            resolve({
+                url: url,
+                content: content
+            })
+        }).catch(function (e) {
+            reject(e);
+        });
+    });
+};
+BaseService.prototype.terminate = function () {
+    if (this.converter) {
+        try {
+            this.converter.destroy();
+        } catch (e) {}
+    }
+};
+
+BaseService.prototype.findCachedContent = function (url) {
+    return this.cache ? this.cache[url] : {
+        title: url,
+        contentType: "video",
+        type: this.type,
+        duration: null,
+        description: "",
+        thumbnails: [],
+        url: url,
+        extras: {}
+    };
+};
+
+BaseService.prototype.getCurrentStatus = function () {
+    return this.converter ? this.converter.status : State.Idle;
+};
+BaseService.prototype.getBackendStatus = function () {
+    return this.converter ? this.converter.getFullStatus() : null;
+};
+
 module.exports = BaseService;

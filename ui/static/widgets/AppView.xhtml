@@ -9,9 +9,10 @@
         @allContentListView > strong {
             display: block;
             text-align: center;
-            padding: 0.3em 0em;
-            color: #AAA;
-            text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.8);
+            padding: 0.2em 0em;
+            color: #EEE;
+            background: #CCC;
+            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
         }
         @allContentListView {
             overflow: auto;
@@ -19,11 +20,51 @@
             margin-top: 1em;
         }
         .widget_SystemStatusView {
-            box-shadow: 0px -2px 1em rgba(0, 0, 0, 0.4);
+            box-shadow: 0px 0px 1em 0.1em rgba(0, 0, 0, 0.4);
             z-index: 1;
+            border-top: solid 1px rgba(255, 255, 255, 0.3);
+        }
+        body .Sys_DialogOverlay {
+            background: rgba(0, 0, 0, 0.2) !important;
+        }
+        body .AnonId_dialogFooter {
+            display: none;
+        }
+        body .AnonId_dialogBody {
+            padding-bottom: 1.2em !important;
+        }
+        @header {
+            background: #336699;
+            padding: 0.3em;
+            align-items: center;
+            color: #FFF;
+            z-index: 1;
+            box-shadow: 0px 0px 1em 0.1em rgba(0, 0, 0, 0.4);
+        }
+        @header i {
+            color: #FFF;
+        }
+        @header > strong {
+            padding: 0.7em;
+        }
+        @header button {
+            min-width: 2em;
+            line-height: 2em;
+            padding: 0em;
+            display: inline-block;
+            background: transparent;
+            border-color: rgba(0, 0, 0, 0.1);
+            margin-left: 0.5em;
         }
     </style>
+
     <ui:SearchView anon-id="searchView"/>
+
+    <hbox anon-id="header">
+        <strong flex="1">Theater</strong>
+        <button anon-id="searchButton"><i class="mdi mdi-magnify" /></button>
+        <button anon-id="refreshButton"><i class="mdi mdi-reload" /></button>
+    </hbox>
     <vbox anon-id="allContentListView" flex="1">
     </vbox>
     <ui:SystemStatusView />

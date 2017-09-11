@@ -1,0 +1,19 @@
+{
+  "name": "Theater",
+  "short_name": "Theater",
+  "icons": [
+      {
+        "src": "style/images/icons/xxhdpi/ic_launcher.png",
+        "sizes": "172x172",
+        "type": "image/png"
+    },
+      {
+        "src": "style/images/icons/xxxhdpi/ic_launcher.png",
+        "sizes": "230x230",
+        "type": "image/png"
+      }
+  ],
+  "start_url": "http://evolus.vn/d/go?id=theater",
+  "display": "standalone",
+  "orientation": "portrait"
+}
