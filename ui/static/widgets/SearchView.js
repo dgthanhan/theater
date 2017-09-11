@@ -3,7 +3,7 @@ function SearchView() {
 
     SearchView.instance = this;
 
-    this.bind("click", this.search, this.searchButton);
+    this.bind("click", this.search, this.doSearchButton);
     this.bind("keyup", function(e){
         if (e.keyCode == 13) {
             SearchView.instance.search();
@@ -67,7 +67,6 @@ SearchView.prototype.selectSource = function(service) {
     });
 }
 SearchView.prototype.setEnabled = function(searchable) {
-    console.log("Search able " + searchable);
     if (!searchable) {
         Dom.addClass(this.genreManager.node(), "Disabled");
         Dom.addClass(this.qualityManager.node(), "Disabled");

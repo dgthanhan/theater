@@ -56,15 +56,16 @@
             border-color: rgba(0, 0, 0, 0.1);
             margin-left: 0.5em;
         }
+        .Disabled {
+            visibility: collapse;
+        }
     </style>
-
-    <ui:SearchView anon-id="searchView"/>
-
     <hbox anon-id="header">
         <strong flex="1">Theater</strong>
         <button anon-id="searchButton"><i class="mdi mdi-magnify" /></button>
         <button anon-id="refreshButton"><i class="mdi mdi-reload" /></button>
     </hbox>
+    <ui:SearchView anon-id="searchView" class="Disabled"/>
     <vbox anon-id="allContentListView" flex="1">
     </vbox>
     <ui:SystemStatusView />
