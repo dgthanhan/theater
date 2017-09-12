@@ -2,9 +2,35 @@
     const request = require("request");
     var YTS = {
         name: "yts",
-        find: function () {
+        find: function (options) {
             return new Promise(function (resolve, reject) {
-                request("https://yts.ag/api/v2/list_movies.json?sort_by=year&genre=action", function (error, response, body) {
+                var keyword =  options.term || "";
+                if (keyword == null || keyword.length == 0) {
+                    reject(new Error("Empty search key"));
+                    return;
+                }
+                var genre = options.genre || "";
+                var quality = options.quality || "";
+                var sortBy = options.sortBy || "";
+                var page = options.page || 1;
+                var limit = options.limit || 10;
+                var url = "https://yts.ag/api/v2/list_movies.json?sort_by=year&query_term=" + keyword;
+                if (genre.length > 0) {
+                    url = url + "&genre=" + genre;
+                }
+                if (quality.length > 0) {
+                    url = url + "&quality=" + quality;
+                }
+                if (sortBy.length > 0) {
+                    url = url +  "&sort_by=" + sortBy;
+                }
+                var orderBy = options.orderBy || "desc";
+                url += "&order_by=" + orderBy;
+                url += "&page=" + page;
+                url += "&limit=" + limit;
+
+                console.log("Requesting " + url);
+                request(url, function (error, response, body) {
                     if (error) {
                         reject(error);
                         return;
@@ -19,23 +45,30 @@
                     var movies = data.data.movies;
 
                     var contents = [];
-
-                    for (var movie of movies) {
-                        var content = {
-                            title: movie.title,
-                            contentType: "video",
-                            duration: movie.runtime * 60,
-                            description: movie.summary,
-                            thumbnails: [movie.medium_cover_image],
-                            url: movie.torrents[0].url,
-                            hash: movie.torrents[0].hash,
-                            extras: {
-                                torrents: movie.torrents
-                            }
-                        };
-                        contents.push(content);
+                    if (movies != null && movies.length > 0) {
+                        for (var movie of movies) {
+                            var content = {
+                                title: movie.title,
+                                contentType: "video",
+                                duration: movie.runtime * 60,
+                                description: movie.summary,
+                                thumbnails: [movie.medium_cover_image],
+                                url: movie.torrents[0].url,
+                                hash: movie.torrents[0].hash,
+                                extras: {
+                                    torrents: movie.torrents
+                                }
+                            };
+                            contents.push(content);
+                        }
                     }
-
+                    var vc = data.data.movie_count;
+                    var hasMore = vc > 0 && (data.data.page_number * data.data.limit) < vc;
+                    console.log("Has more items " + hasMore + " video counts: " + vc);
+                    if (hasMore) {
+                        //Item to load more
+                        contents.push({title: "Load more...", description: "", page: data.data.page_number + 1, limit: data.data.limit});
+                    }
                     resolve(contents);
                 });
             });
