@@ -3,12 +3,11 @@
         @searchBox {
             padding: 1em;
         }
-        .Disabled {
-            visibility: collapse;
-        }
+
         @searchTermBox {
             padding-left: 1em;
             padding-right: 1em;
+            margin-bottom: 1em;
         }
         @searchBox hbox:last-child {
           margin-top: 0.5em;
@@ -16,22 +15,25 @@
         @searchTermBox button {
           margin-left: 0.5em;
         }
-        @genreManager, @sortByManager{
+        .AnonId_genreManager {
+          margin-left: 0.5em;
+        }
+        .AnonId_sortByManager {
           margin-left: 0.5em;
         }
     </style>
     <vbox anon-id="searchBox">
-        <hbox flex="1">
+        <hbox>
             <ui:ComboManager flex="1" anon-id="mediaSourceManager"/>
             <ui:ComboManager flex="1" anon-id="genreManager"/>
         </hbox>
-        <hbox anon-id="filterBox" flex="1">
+        <hbox anon-id="filterBox">
          <ui:ComboManager flex="1" anon-id="qualityManager"/>
          <ui:ComboManager flex="1" anon-id="sortByManager"/>
        </hbox>
     </vbox>
     <hbox anon-id="searchTermBox">
-        <hbox flex="1" ><input anon-id="searchText" flex="1" type="text" placeholder="Search everything..."/></hbox>
+        <hbox flex="1"><input anon-id="searchText" flex="1" type="text" placeholder="Search everything..."/></hbox>
         <button type="button" anon-id="doSearchButton"><i class="mdi mdi-magnify" /></button>
     </hbox>
 </vbox>

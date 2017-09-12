@@ -71,22 +71,30 @@
         @playbackStatusPane[status='serving'] {
             color: #7F7;
         }
-
+        @infoControlPane[shrinked='true'] {
+            margin-top: 0em;
+            border-top: none;
+            padding-top: 0em;
+        }
         @backendStatusMessage {
             font-size: 0.85em;
             opacity: 0.5;
         }
-        @backendDetailButton > i {
+        @backendDetailButton, @toggleViewButton > i {
             line-height: 2em;
             color: #FFF;
         }
-        @backendDetailButton {
+        @backendDetailButton, @toggleViewButton {
             width: 2em;
             padding: 0em;
             display: inline-block;
             background: transparent;
             border-color: rgba(0, 0, 0, 0.1);
         }
+        @toggleViewButton {
+            margin-right: 0.5em;
+        }
+
     </style>
     <hbox anon-id="currentContentPane">
         <hbox anon-id="thumbnailList"></hbox>
@@ -108,6 +116,7 @@
                 <div anon-id="backendStatusMessage"></div>
             </hbox>
         </vbox>
+        <button anon-id="toggleViewButton"><i class="mdi mdi-chevron-down" /></button>
         <button anon-id="backendDetailButton"><i class="mdi mdi-dots-vertical" /></button>
     </hbox>
 </vbox>

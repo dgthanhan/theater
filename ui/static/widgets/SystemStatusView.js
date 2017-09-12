@@ -1,7 +1,7 @@
 function SystemStatusView() {
     BaseApplicationView.call(this);
     SystemStatusView.instance = this;
-
+    this.isViewExpanded = true;
     this.ws = new WebSocket("ws://" + window.location.host + "/status");
     this.ws.onopen = function () {
         console.log("WS opened", thiz.ws);
@@ -15,6 +15,20 @@ function SystemStatusView() {
     this.bind("click", function () {
         new SystemStatusDialog().open(this.status);
     }, this.backendDetailButton);
+
+    var thiz = this;
+    this.bind("click", function () {
+          thiz.isViewExpanded = !thiz.isViewExpanded;
+          if (thiz.isViewExpanded) {
+              Dom.removeClass(thiz.currentContentPane, "Disabled");
+          } else {
+              Dom.addClass(thiz.currentContentPane, "Disabled");
+          }
+          thiz.toggleViewButton.innerHTML = thiz.isViewExpanded ? "<i class='mdi mdi-chevron-down' />" : "<i class='mdi mdi-chevron-up' />";
+          thiz.infoControlPane.setAttribute("shrinked", !thiz.isViewExpanded);
+
+    }, this.toggleViewButton);
+
 }
 
 __extend(BaseApplicationView, SystemStatusView);
