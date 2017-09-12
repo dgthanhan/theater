@@ -32,6 +32,10 @@
         body .AnonId_dialogBody {
             padding-bottom: 1.2em !important;
         }
+        body .Disabled {
+            visibility: collapse;
+            display: none !important;
+        }
         @header {
             background: #336699;
             padding: 0.3em;
@@ -55,12 +59,17 @@
             border-color: rgba(0, 0, 0, 0.1);
             margin-left: 0.5em;
         }
+        .Disabled {
+            visibility: collapse;
+            display: none;
+        }
     </style>
     <hbox anon-id="header">
         <strong flex="1">Theater</strong>
         <button anon-id="searchButton"><i class="mdi mdi-magnify" /></button>
         <button anon-id="refreshButton"><i class="mdi mdi-reload" /></button>
     </hbox>
+    <ui:SearchView anon-id="searchView" class="Disabled"/>
     <vbox anon-id="allContentListView" flex="1">
     </vbox>
     <ui:SystemStatusView />

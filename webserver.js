@@ -31,13 +31,35 @@
         server.get("/api/contents", function (request, response) {
             var service = serviceManager.getService(request.query.service);
             var refresh = request.query.refresh == "true";
-            service.getContents({forceRefresh: refresh}).then(function (contents) {
-                console.log("Content returned for ", service.type, contents);
+            var quality = request.query.quality || "";
+            var genre = request.query.genre || "";
+            var sortBy = request.query.sortBy || "";
+            var orderBy = request.query.orderBy || "";
+            var page = request.query.page || "";
+            var limit = request.query.limit || "10";
+            service.getContents(
+              {
+                forceRefresh: refresh,
+                term: request.query.term,
+                quality: quality,
+                genre: genre,
+                sortBy:  sortBy,
+                orderBy: orderBy,
+                limit: limit,
+                page: page
+              }).then(function (contents) {
+                //console.log("Content returned for ", service.type, contents);
                 response.json(contents);
             }).catch(function (e) {
                 console.error(e);
                 response.status(500).send(e);
             });
+        });
+
+        server.get("/api/search/options", function (request, response) {
+            var service = serviceManager.getService(request.query.service);
+            var options = service.getSearchFilterOptions();
+            response.json(options);
         });
 
         server.get("/api/play", function (request, response) {
@@ -72,8 +94,9 @@
         })
 
         var ip = common.findLANAddress();
-        console.log("Listen at: " + ip);
-        server.listen(12002, ip);
+	var port = 12002;
+        console.log("Listen at: " + ip + ":" + port);
+        server.listen(port, ip);
         console.log("Web server started.");
     }
 
