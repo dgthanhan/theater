@@ -53,7 +53,7 @@
                     resolve();
                 }
 
-                player.showNotification("Theater", "Theater is prearing channel: '" + content.title + "'. Sit back and relax please!");
+                player.showNotification(content.title, "Theater is prearing channel. Sit back and relax please!");
 
                 playbackOK = true;
                 playbackMessage = "Resolving media..";
@@ -61,6 +61,7 @@
 
                 service.start(content).then(function (resolvedContent) {
                     resolvedURL = resolvedContent.url;
+                    playbackOK = true;
                     playbackMessage = "Sending media to player...";
                     sayStatusChanged();
                     player.play(resolvedContent.url).then(function () {

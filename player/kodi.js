@@ -1,14 +1,14 @@
 (function () {
     const request = require("request");
 
-    function KodiController(port, options) {
+    function VLCController(port, options) {
         this.port = port;
     }
 
-    KodiController.prototype.getBaseURL = function () {
+    VLCController.prototype.getBaseURL = function () {
         return "http://127.0.0.1:" + this.port + "/jsonrpc?request=";
     };
-    KodiController.prototype._get = function (object) {
+    VLCController.prototype._get = function (object) {
         var thiz = this;
         return new Promise(function (resolve, reject) {
             var url = thiz.getBaseURL() + encodeURIComponent(JSON.stringify(object));
@@ -25,7 +25,7 @@
             });
         });
     };
-    KodiController.prototype.play = function (url) {
+    VLCController.prototype.play = function (url) {
         return this._get({
             jsonrpc: "2.0",
             id: "1",
@@ -37,7 +37,7 @@
             }
         });
     };
-    KodiController.prototype.stop = function () {
+    VLCController.prototype.stop = function () {
         var thiz = this;
         return new Promise(function (resolve, reject) {
             thiz._get({
@@ -67,7 +67,7 @@
             }).catch(reject);
         });
     };
-    KodiController.prototype.showNotification = function (title, message) {
+    VLCController.prototype.showNotification = function (title, message) {
         return this._get({
             jsonrpc: "2.0",
             id: "1",
@@ -80,7 +80,7 @@
     };
 
 
-    module.exports = KodiController;
+    module.exports = VLCController;
 })();
 
 

@@ -114,7 +114,10 @@
             var maxTries = (typeof(options.maxTries) === "number") ? options.maxTries : 5;
             var count = -1;
             var next = function () {
-                if (thiz.destroyed) return;
+                if (thiz.destroyed) {
+                    reject(new Error("Destroyed"));
+                    return;
+                }
                 count ++;
                 console.log("count >= maxTries", count, maxTries);
                 if (count >= maxTries) {
@@ -167,15 +170,24 @@
 
                 console.log("      Waiting for port to appear...");
                 waitForPort(PLAYER_PORT, 20).then(function () {
-                    if (thiz.destroyed) return;
+                    if (thiz.destroyed) {
+                        reject(new Error("Destroyed"));
+                        return;
+                    }
                     console.log("      Port appeared, waiting for port to disappear...");
                     waitForPort(PLAYER_PORT, 15, "disappearing").then(function () {
-                        if (thiz.destroyed) return;
+                        if (thiz.destroyed) {
+                            reject(new Error("Destroyed"));
+                            return;
+                        }
                         //well, that's weird the port disappeared, reject it now
                         console.log("      Port disappeared, report as failure.");
                         reject(new Error("Port disappeared after started."));
                     }).catch(function () {
-                        if (thiz.destroyed) return;
+                        if (thiz.destroyed) {
+                            reject(new Error("Destroyed"));
+                            return;
+                        }
                         //ok, port looked good, it lasted for more than 10 seconds
                         console.log("      Port NOT disappeared, report as success.");
                         setTimeout(function () {

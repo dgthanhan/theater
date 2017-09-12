@@ -1,9 +1,9 @@
 (function () {
     const webServer = require("./webserver.js");
     const KodiController = require("./player/kodi.js");
+    const VLCController = require("./player/vlc.js");
     const serviceManager = require("./services/service-manager.js");
     const discovery = require("./discovery.js");
-
 
 
     function main() {
