@@ -42,7 +42,7 @@
 
                     thiz.flix.server.once('listening', function () {
                         thiz.status = State.Serving;
-                        var url = 'http://' + thiz.flix.server.address().address + ":" + thiz.flix.server.address().port + '/' + (movieFileName ? movieFileName : "");
+                        var url = 'http://127.0.0.1:' + thiz.flix.server.address().port + '/' + (movieFileName ? movieFileName : "");
                         console.log("Flix listening: " + url);
                         resolve(url);
                         console.log("Resolve called");
