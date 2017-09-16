@@ -13,8 +13,8 @@
                 cmd += url;
 
                 exec(cmd, function (error, stdout, stderr) {
-                    resolve();
                 });
+                resolve();
             });
         });
     };
