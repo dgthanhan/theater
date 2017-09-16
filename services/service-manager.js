@@ -99,7 +99,7 @@
 
             playbackMessage = "Sending media to player...";
             sayStatusChanged();
-            player.play(resolvedURL, {live: resolvedContent && resolvedContent.live}).then(function () {
+            player.play(resolvedURL, {live: currentContent && currentContent.live}).then(function () {
                 playbackMessage = "Media sent to player";
                 sayStatusChanged();
             }).catch(function (e) {
