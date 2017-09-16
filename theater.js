@@ -2,6 +2,7 @@
     const webServer = require("./webserver.js");
     const KodiController = require("./player/kodi.js");
     const VLCController = require("./player/vlc.js");
+    const OMXController = require("./player/omxplayer.js");
     const serviceManager = require("./services/service-manager.js");
     const discovery = require("./discovery.js");
 
@@ -9,7 +10,7 @@
     function main() {
         discovery.start();
 
-        var player = new KodiController(13000);
+        var player = new OMXController();
 
         serviceManager.setPlayer(player);
 
