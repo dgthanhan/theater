@@ -23,9 +23,8 @@ BaseService.prototype.start = function (content) {
             try {
                 thiz.converter.destroy();
             } catch (e) {}
-        } else {
-            thiz.converter = thiz.createConverter();
         }
+        thiz.converter = thiz.createConverter();
 
         thiz.converter.convert(content.url).then(function (url) {
             resolve({
