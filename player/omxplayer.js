@@ -21,12 +21,12 @@
                 cmd += " > ~/omxplayer.log 2>&1";
 
                 thiz.stopRequested = false;
-                var p = exec(cmd, function (error, stdout, stderr) {
+                thiz.process = exec(cmd, function (error, stdout, stderr) {
                 });
 
                 resolve();
 
-                p.on("exit", function () {
+                thiz.process.on("exit", function () {
                     console.log("OMXPlayer exit, stopRequested = " + thiz.stopRequested);
                     if (!thiz.stopRequested) {
                         console.log("  > Restart playback automatically...");
@@ -39,6 +39,7 @@
     OMXController.prototype.stop = function () {
         var thiz = this;
         this.stopRequested = true;
+        if (this.process) this.process.removeAllListeners();
         return new Promise(function (resolve, reject) {
             exec("killall omxplayer.bin", function (error, stdout, stderr) {
                 resolve();
