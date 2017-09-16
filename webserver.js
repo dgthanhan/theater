@@ -78,6 +78,14 @@
                 response.status(500).send(e);
             });
         });
+        server.get("/api/stop", function (request, response) {
+            serviceManager.stop().then(function () {
+                response.json({message: "OK"})
+            }).catch (function () {
+                console.error(e);
+                response.status(500).send(e);
+            });
+        });
 
         server.ws("/status", function(ws, request) {
             ws.on("message", function(msg) {

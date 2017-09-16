@@ -110,6 +110,17 @@
             });
         });
     };
+    Manager.stop = function () {
+        return new Promise(function (resolve, reject) {
+            resolve();
+            player.stop();
+            if (activeService) activeService.terminate();
+            currentContent = null;
+            resolvedURL = null;
+
+            sayStatusChanged();
+        });
+    };
 
     function sayStatusChanged() {
         try {

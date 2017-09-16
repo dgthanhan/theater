@@ -5,6 +5,10 @@ function SystemStatusDialog() {
         API.get("/api/replay").then(function () {
         });
     }, this.playButton);
+    this.bind("click", function () {
+        API.get("/api/stop").then(function () {
+        });
+    }, this.killButton);
 }
 
 __extend(BaseDialog, SystemStatusDialog);

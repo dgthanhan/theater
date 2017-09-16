@@ -8,7 +8,7 @@
         var thiz = this;
         return new Promise(function (resolve, reject) {
             thiz.stop().then(function () {
-                exec("omxplayer -o hdmi " + url, function (error, stdout, stderr) {
+                exec("omxplayer -o hdmi --blank " + url, function (error, stdout, stderr) {
                     resolve();
                 });
             });
@@ -17,7 +17,7 @@
     OMXController.prototype.stop = function () {
         var thiz = this;
         return new Promise(function (resolve, reject) {
-            exec("killall -9 omxplayer", function (error, stdout, stderr) {
+            exec("killall -9 omxplayer.bin", function (error, stdout, stderr) {
                 resolve();
             });
         });
