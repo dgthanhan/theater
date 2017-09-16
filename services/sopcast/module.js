@@ -70,5 +70,9 @@
         return new SopcastConverter();
     };
 
+    SopcastService.prototype.isLiveContent = function (content) {
+        return true;
+    };
+
     module.exports = new SopcastService();
 })();

@@ -4,11 +4,15 @@
     function OMXController() {
     }
 
-    OMXController.prototype.play = function (url) {
+    OMXController.prototype.play = function (url, options) {
         var thiz = this;
         return new Promise(function (resolve, reject) {
             thiz.stop().then(function () {
-                exec("omxplayer -o hdmi --blank " + url, function (error, stdout, stderr) {
+                var cmd = "omxplayer -o hdmi --blank ";
+                if (options && options.live) cmd += "--live ";
+                cmd += url;
+
+                exec(cmd, function (error, stdout, stderr) {
                     resolve();
                 });
             });
@@ -17,7 +21,7 @@
     OMXController.prototype.stop = function () {
         var thiz = this;
         return new Promise(function (resolve, reject) {
-            exec("killall -9 omxplayer.bin", function (error, stdout, stderr) {
+            exec("killall omxplayer.bin", function (error, stdout, stderr) {
                 resolve();
             });
         });

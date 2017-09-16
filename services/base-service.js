@@ -30,6 +30,7 @@ BaseService.prototype.start = function (content) {
         thiz.converter.convert(content.url).then(function (url) {
             resolve({
                 url: url,
+                live: thiz.isLiveContent(content),
                 content: content
             })
         }).catch(function (e) {
@@ -43,6 +44,9 @@ BaseService.prototype.terminate = function () {
             this.converter.destroy();
         } catch (e) {}
     }
+};
+BaseService.prototype.isLiveContent = function (content) {
+    return false;
 };
 
 BaseService.prototype.findCachedContent = function (url) {
