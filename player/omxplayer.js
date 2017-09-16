@@ -11,7 +11,7 @@
                 var cmd = "omxplayer -o hdmi --blank ";
                 if (options && options.live) cmd += "--live ";
                 cmd += url;
-                cmd += " > ~/omxplayer.log";
+                cmd += " > ~/omxplayer.log 2>&1";
 
                 exec(cmd, function (error, stdout, stderr) {
                 });
