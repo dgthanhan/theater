@@ -1,11 +1,18 @@
 (function () {
     const {spawn, exec} = require("child_process");
 
+
     function OMXController() {
+        this.stopRequest = true;
     }
 
     OMXController.prototype.play = function (url, options) {
         var thiz = this;
+        this.args = {
+            url: url,
+            options: options
+        };
+
         return new Promise(function (resolve, reject) {
             thiz.stop().then(function () {
                 var cmd = "omxplayer -o hdmi --blank ";
@@ -13,14 +20,25 @@
                 cmd += url;
                 cmd += " > ~/omxplayer.log 2>&1";
 
-                exec(cmd, function (error, stdout, stderr) {
+                thiz.stopRequested = false;
+                var p = exec(cmd, function (error, stdout, stderr) {
                 });
+
                 resolve();
+
+                p.on("exit", function () {
+                    console.log("OMXPlayer exit, stopRequested = " + thiz.stopRequested);
+                    if (!thiz.stopRequested) {
+                        console.log("  > Restart playback automatically...");
+                        thiz.play(thiz.args.url, thiz.args.opions);
+                    }
+                })
             });
         });
     };
     OMXController.prototype.stop = function () {
         var thiz = this;
+        this.stopRequested = true;
         return new Promise(function (resolve, reject) {
             exec("killall omxplayer.bin", function (error, stdout, stderr) {
                 resolve();
