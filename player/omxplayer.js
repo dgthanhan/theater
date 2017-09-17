@@ -1,9 +1,10 @@
 (function () {
     const {spawn, exec} = require("child_process");
-
+    const {NodeCec, CEC} = require( "node-cec" );
 
     function OMXController() {
         this.stopRequest = true;
+        this.setupCEC();
     }
 
     OMXController.prototype.play = function (url, options) {
@@ -16,7 +17,7 @@
         return new Promise(function (resolve, reject) {
             thiz.stop().then(function () {
                 var cmd = "omxplayer -o hdmi --blank ";
-                if (options && options.live) cmd += "--live ";
+                if ((options && options.live) || url.indexOf("tv.asf")) cmd += "--live ";
                 cmd += url;
                 cmd += " > ~/omxplayer.log 2>&1";
 
@@ -53,6 +54,27 @@
             //     resolve();
             // });
         });
+    };
+
+    OMXController.prototype.setupCEC = function () {
+        this.cec = new NodeCec("node-cec-monitor");
+        process.on("SIGINT", function() {
+            if (this.cec != null) {
+                this.cec.stop();
+            }
+        });
+
+        this.cec.on("PLAY", function () {
+            console.log("CEC: PLAY");
+        });
+        this.cec.on("PAUSE", function () {
+            console.log("CEC: PAUSE");
+        });
+        this.cec.on("STOP", function () {
+            console.log("CEC: STOP");
+        });
+
+        this.cec.start("cec-client", "-m", "-d", "8", "-b", "r");
     };
 
 
