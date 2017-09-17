@@ -32,17 +32,21 @@
         });
     };
     OMXController.prototype.stop = function () {
+        var thiz = this;
         this.stopRequested = true;
-        if (this.omx) {
-            try {
-                this.omx.removeAllListeners();
-            } catch (e) {
-                console.error(e);
-            }
+        return new Promise(function (resolve, reject) {
+            if (thiz.omx) {
+                try {
+                    thiz.omx.removeAllListeners();
+                } catch (e) {
+                    console.error(e);
+                }
 
-            this.omx.quit();
-        }
-        resolve();
+                thiz.omx.quit();
+            }
+            resolve();
+
+        });
     };
     OMXController.prototype.showNotification = function (title, message) {
         return new Promise(function (resolve, reject) {
