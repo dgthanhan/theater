@@ -75,7 +75,7 @@
             console.log("CEC: STOP");
         });
 
-        this.cec.start("cec-client", "-m", "-d", "8");
+        this.cec.start("cec-client");
         console.log("CEC started.");
     };
 
