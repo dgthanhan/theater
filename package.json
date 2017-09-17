@@ -11,6 +11,7 @@
     "start": "node ./main.js"
   },
   "dependencies": {
+    "diff": "^3.3.1",
     "express": "^4.15.4",
     "express-ws": "^3.0.0",
     "node-cec": "^0.1.2",

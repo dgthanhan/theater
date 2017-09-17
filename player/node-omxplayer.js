@@ -53,6 +53,8 @@ function buildArgs (source, givenOutput, loop, initialVolume, showOsd, subtitleP
 
     if (source.indexOf("/tv.asf") >= 0) {
         args.push("--live");
+        args.push("--audio_queue", "10");
+        args.push("--video_queue", "40");
     }
 
 	return args;
