@@ -43,6 +43,7 @@
                 }
 
                 thiz.omx.quit();
+                thiz.omx = null;
             }
             resolve();
 
@@ -58,6 +59,7 @@
     };
 
     OMXController.prototype.setupCEC = function () {
+        var thiz = this;
         this.cec = new NodeCec("node-cec-monitor");
         process.on("SIGINT", function() {
             if (this.cec != null) {
@@ -72,14 +74,19 @@
             var code = packet.args[0];
             if (code == CEC.UserControlCode.PLAY) {
                 console.log("CEC: PLAY");
+                if (thiz.omx) thiz.omx.play();
             } else if (code == CEC.UserControlCode.PAUSE) {
                 console.log("CEC: PAUSE");
+                if (thiz.omx) thiz.omx.pause();
             } else if (code == CEC.UserControlCode.STOP) {
                 console.log("CEC: STOP");
+
             } else if (code == CEC.UserControlCode.FAST_FORWARD) {
                 console.log("CEC: FAST_FORWARD");
+                if (thiz.omx) thiz.omx.fastFwd();
             } else if (code == CEC.UserControlCode.REWIND) {
                 console.log("CEC: REWIND");
+                if (thiz.omx) thiz.omx.rewind();
             }
         });
 
