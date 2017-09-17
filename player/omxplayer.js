@@ -62,6 +62,7 @@
             if (this.cec != null) {
                 this.cec.stop();
             }
+            process.exit(0);
         });
 
         this.cec.on("PLAY", function () {
