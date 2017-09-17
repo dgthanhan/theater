@@ -95,7 +95,7 @@ function Omx (source, output, loop, initialVolume, showOsd, subtitlePath) {
 
 		let args = buildArgs(src, out, loop, initialVolume, showOsd, subtitlePath);
 		console.log('args for omxplayer:', args);
-		let omxProcess = spawn('omxplayer', args);
+		let omxProcess = spawn('omxplayer', args, {stdio: ["pipe", 1, 2]});
 		open = true;
 
 		omxProcess.stdin.setEncoding('utf-8');
