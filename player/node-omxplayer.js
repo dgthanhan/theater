@@ -51,6 +51,10 @@ function buildArgs (source, givenOutput, loop, initialVolume, showOsd, subtitleP
         args.push("--subtitles", subtitlePath);
     }
 
+    if (source.indexOf("/tv.asf") >= 0) {
+        args.push("--live");
+    }
+
 	return args;
 
 }

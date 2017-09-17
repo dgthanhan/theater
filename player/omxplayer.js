@@ -79,14 +79,17 @@
                 console.log("CEC: PAUSE");
                 if (thiz.omx) thiz.omx.pause();
             } else if (code == CEC.UserControlCode.STOP) {
-                console.log("CEC: STOP");
-
+                console.log("CEC: FAST_FORWARD");
+                if (thiz.omx) {
+                    var info = thiz.omx.info();
+                    console.log("Info = ", info);
+                }
             } else if (code == CEC.UserControlCode.FAST_FORWARD) {
                 console.log("CEC: FAST_FORWARD");
-                if (thiz.omx) thiz.omx.fastFwd();
+                if (thiz.omx) thiz.omx.fwd30();
             } else if (code == CEC.UserControlCode.REWIND) {
                 console.log("CEC: REWIND");
-                if (thiz.omx) thiz.omx.rewind();
+                if (thiz.omx) thiz.omx.back30();
             }
         });
 
