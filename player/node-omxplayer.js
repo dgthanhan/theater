@@ -55,6 +55,7 @@ function buildArgs (source, givenOutput, loop, initialVolume, showOsd, subtitleP
         args.push("--live");
         args.push("--audio_queue", "10");
         args.push("--video_queue", "40");
+        args.push("--stats");
     }
 
 	return args;
