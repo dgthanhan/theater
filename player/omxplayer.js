@@ -19,7 +19,7 @@
         return new Promise(function (resolve, reject) {
             thiz.stop().then(function () {
                 thiz.stopRequested = false;
-                thiz.omx = new Omx(url, "hdmi")
+                thiz.omx = new Omx(url, "hdmi", false, null, true);
                 resolve();
                 thiz.omx.on("close", function () {
                     console.log("OMXPlayer exit, stopRequested = " + thiz.stopRequested);
@@ -38,11 +38,11 @@
             if (thiz.omx) {
                 try {
                     thiz.omx.removeAllListeners();
+                    thiz.omx.quit();
                 } catch (e) {
                     console.error(e);
                 }
 
-                thiz.omx.quit();
                 thiz.omx = null;
             }
             resolve();
