@@ -1,7 +1,7 @@
 (function () {
     const {spawn, exec} = require("child_process");
     const {NodeCec, CEC} = require( "node-cec" );
-    var Omx = require("node-omxplayer");
+    var Omx = require("./node-omxplayer.js");
 
     function OMXController() {
         this.stopRequest = true;
@@ -19,7 +19,7 @@
         return new Promise(function (resolve, reject) {
             thiz.stop().then(function () {
                 thiz.stopRequested = false;
-                thiz.omx = new Omx(url, "hdmi", false, null, true);
+                thiz.omx = new Omx(url, "hdmi", false, null, true, options ? options.subtitlePath : null);
                 resolve();
                 thiz.omx.on("close", function () {
                     console.log("OMXPlayer exit, stopRequested = " + thiz.stopRequested);

@@ -49,6 +49,7 @@
                         for (var movie of movies) {
                             var content = {
                                 title: movie.title,
+                                imdb: movie.imdb_code,
                                 contentType: "video",
                                 duration: movie.runtime * 60,
                                 description: movie.summary,

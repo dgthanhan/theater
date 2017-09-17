@@ -26,9 +26,10 @@ BaseService.prototype.start = function (content) {
         }
         thiz.converter = thiz.createConverter();
 
-        thiz.converter.convert(content.url).then(function (url) {
+        thiz.converter.convert(content.url, {content: content}).then(function (url) {
             resolve({
                 url: url,
+                subtitlePath: content.subtitlePath,
                 live: thiz.isLiveContent(content),
                 content: content
             })

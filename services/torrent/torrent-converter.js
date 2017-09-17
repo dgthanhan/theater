@@ -44,7 +44,30 @@
                         thiz.status = State.Serving;
                         var url = 'http://127.0.0.1:' + thiz.flix.server.address().port + '/' + (movieFileName ? movieFileName : "");
                         console.log("Flix listening: " + url);
-                        resolve(url);
+
+                        //try searching subtitle
+                        if (options && options.content && options.content.imdb) {
+                            const subSearch = require("yifysubtitles");
+                            options.content.subtitlePath = null;
+                            subSearch(options.content.imdb, {
+                                path: "/tmp",
+                                langs: ["en"],
+                                format: "srt"
+                            }).then(function (subtitles){
+                                if (subtitles && subtitles.length > 0) {
+                                    options.content.subtitlePath = subtitles[0].path;
+                                    console.log("Found subtitle: " + subtitles[0].path);
+                                }
+                                resolve(url);
+                            }).catch(function (e) {
+                                console.log("Failed to search for subtitles.");
+                                console.error(e);
+                                resolve(url);
+                            });
+
+                        } else {
+                            resolve(url);
+                        }
                         console.log("Resolve called");
                     });
                     thiz.flix.server.on('error', function (error) {
