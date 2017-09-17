@@ -10,7 +10,7 @@
     function main() {
         discovery.start();
 
-        var player = new KodiController();
+        var player = new OMXController();
 
         serviceManager.setPlayer(player);
 

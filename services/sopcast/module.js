@@ -40,6 +40,22 @@
 
         return new Promise(function (resolve, reject) {
             Promise.all(promises).then(function () {
+                var extra = require("fs").readFileSync("/home/pi/soplinks", {encoding: "utf8"});
+                if (extra) {
+                    var links = extra.split(/[\r\n]+/);
+                    for (var link of links) {
+                        contents.push({
+                            title: link,
+                            contentType: "video",
+                            duration: null,
+                            description: "Custom link",
+                            thumbnails: [],
+                            url: [link],
+                            extras: {}
+                        });
+                    }
+                }
+
                 if (contents.length == 0) {
                     contents.push({
                         title: "CBNS TV",
