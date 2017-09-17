@@ -1,10 +1,12 @@
 (function () {
     const {spawn, exec} = require("child_process");
     const {NodeCec, CEC} = require( "node-cec" );
+    var Omx = require("node-omxplayer");
 
     function OMXController() {
         this.stopRequest = true;
         this.setupCEC();
+        this.omx = null;
     }
 
     OMXController.prototype.play = function (url, options) {
@@ -16,36 +18,31 @@
 
         return new Promise(function (resolve, reject) {
             thiz.stop().then(function () {
-                var cmd = "omxplayer -o hdmi --blank ";
-                if ((options && options.live) || url.indexOf("tv.asf")) cmd += "--live ";
-                cmd += url;
-                cmd += " > ~/omxplayer.log 2>&1";
-
                 thiz.stopRequested = false;
-                thiz.process = exec(cmd, function (error, stdout, stderr) {
-                });
-
+                thiz.omx = new Omx(url, "hdmi")
                 resolve();
-
-                thiz.process.on("exit", function () {
+                thiz.omx.on("close", function () {
                     console.log("OMXPlayer exit, stopRequested = " + thiz.stopRequested);
                     if (!thiz.stopRequested) {
                         console.log("  > Restart playback automatically...");
                         thiz.play(thiz.args.url, thiz.args.opions);
                     }
-                })
+                });
             });
         });
     };
     OMXController.prototype.stop = function () {
-        var thiz = this;
         this.stopRequested = true;
-        if (this.process) this.process.removeAllListeners();
-        return new Promise(function (resolve, reject) {
-            exec("killall omxplayer.bin", function (error, stdout, stderr) {
-                resolve();
-            });
-        });
+        if (this.omx) {
+            try {
+                this.omx.removeAllListeners();
+            } catch (e) {
+                console.error(e);
+            }
+
+            this.omx.quit();
+        }
+        resolve();
     };
     OMXController.prototype.showNotification = function (title, message) {
         return new Promise(function (resolve, reject) {
