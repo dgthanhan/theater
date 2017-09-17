@@ -65,14 +65,21 @@
             process.exit(0);
         });
 
-        this.cec.on("PLAY", function () {
-            console.log("CEC: PLAY");
-        });
-        this.cec.on("PAUSE", function () {
-            console.log("CEC: PAUSE");
-        });
-        this.cec.on("STOP", function () {
-            console.log("CEC: STOP");
+        this.cec.on("VENDOR_REMOTE_BUTTON_UP", function (packet) {
+            if (!packet || !packet.args || !packet.args[0]) return;
+            console.log(packet);
+            var code = packet.args[0];
+            if (code == CEC.UserControlCode.PLAY) {
+                console.log("CEC: PLAY");
+            } else if (code == CEC.UserControlCode.PAUSE) {
+                console.log("CEC: PAUSE");
+            } else if (code == CEC.UserControlCode.STOP) {
+                console.log("CEC: STOP");
+            } else if (code == CEC.UserControlCode.FAST_FORWARD) {
+                console.log("CEC: FAST_FORWARD");
+            } else if (code == CEC.UserControlCode.REWIND) {
+                console.log("CEC: REWIND");
+            }
         });
 
         this.cec.start("cec-client");
