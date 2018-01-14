@@ -1,5 +1,6 @@
 (function () {
     const {State} = require("../common.js");
+    const fs = require("fs");
 
     function TorrentConverter() {
         this.status = State.Idle;
@@ -57,6 +58,9 @@
                                 if (subtitles && subtitles.length > 0) {
                                     options.content.subtitlePath = subtitles[0].path;
                                     console.log("Found subtitle: " + subtitles[0].path);
+
+
+                                    fs.createReadStream(options.content.subtitlePath).pipe(fs.createWriteStream("/tmp/theater-current.srt"));
                                 }
                                 resolve(url);
                             }).catch(function (e) {
