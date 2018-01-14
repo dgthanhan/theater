@@ -45,10 +45,10 @@
                     var links = extra.split(/[\r\n]+/);
                     for (var link of links) {
                         contents.push({
-                            title: link,
+                            title: "Custom link",
                             contentType: "video",
                             duration: null,
-                            description: "Custom link",
+                            description: link,
                             thumbnails: [],
                             url: [link],
                             extras: {}
