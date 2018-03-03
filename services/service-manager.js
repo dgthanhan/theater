@@ -65,7 +65,8 @@
                     playbackOK = true;
                     playbackMessage = "Sending media to player...";
                     sayStatusChanged();
-                    player.play(resolvedContent.url, {live: resolvedContent.live, subtitlePath: resolvedContent.subtitlePath}).then(function () {
+                    console.log("resolvedContent", content);
+                    player.play(resolvedContent.url, {live: resolvedContent.live, subtitlePath: resolvedContent.subtitlePath, id: url, content: resolvedContent}).then(function () {
                         playbackMessage = "Media sent to player";
                         sayStatusChanged();
                     }).catch(function (e) {

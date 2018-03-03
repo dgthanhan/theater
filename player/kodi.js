@@ -1,18 +1,19 @@
 (function () {
     const request = require("request");
 
-    function VLCController(port, options) {
+    function KodiController(port, options) {
         this.port = port;
+        this.positionCache = {};
+        this.trackCurrentPosition();
     }
 
-    VLCController.prototype.getBaseURL = function () {
+    KodiController.prototype.getBaseURL = function () {
         return "http://127.0.0.1:" + this.port + "/jsonrpc?request=";
     };
-    VLCController.prototype._get = function (object) {
+    KodiController.prototype._get = function (object) {
         var thiz = this;
         return new Promise(function (resolve, reject) {
             var url = thiz.getBaseURL() + encodeURIComponent(JSON.stringify(object));
-            console.log("KODI RPC: " + object.method);
             request(url, function (error, response, body) {
                 if (!response || response.statusCode != 200) {
                     reject(new Error("Invalid Kodi response"));
@@ -25,7 +26,11 @@
             });
         });
     };
-    VLCController.prototype.play = function (url) {
+    KodiController.prototype.play = function (url, options) {
+        this.currentContentId = options ? options.id : null;
+
+        console.log("LAST TRACKED TIME: ", this.positionCache[this.currentContentId]);
+
         return this._get({
             jsonrpc: "2.0",
             id: "1",
@@ -37,7 +42,7 @@
             }
         });
     };
-    VLCController.prototype.stop = function () {
+    KodiController.prototype.stop = function () {
         var thiz = this;
         return new Promise(function (resolve, reject) {
             thiz._get({
@@ -62,12 +67,13 @@
                         setTimeout(resolve, 2000);
                     }).catch(reject);
                 } else {
+                    thiz.currentContentId = null;
                     resolve();
                 }
             }).catch(reject);
         });
     };
-    VLCController.prototype.showNotification = function (title, message) {
+    KodiController.prototype.showNotification = function (title, message) {
         return this._get({
             jsonrpc: "2.0",
             id: "1",
@@ -78,9 +84,58 @@
             }
         });
     };
+    KodiController.POSITION_TRACK_INTERVAL = 1000;
+
+    KodiController.prototype.trackCurrentPosition = function () {
+        var thiz = this;
+        if (!thiz.currentContentId) {
+            setTimeout(function () {
+                thiz.trackCurrentPosition();
+            }, KodiController.POSITION_TRACK_INTERVAL);
+
+            return;
+        }
+        thiz._get({
+            jsonrpc: "2.0",
+            id: "1",
+            method: "Player.GetActivePlayers"
+        }).then(function (response) {
+            var players = response.result;
+            var player = null;
+            if (players.length > 0) {
+                thiz._get({
+                    jsonrpc: "2.0",
+                    id: "1",
+                    method: "Player.GetProperties",
+                    params: {
+                        playerid: players[0].playerid,
+                        properties: [
+                            "position",
+                            "time",
+                            "totaltime"
+                        ]
+                    }
+                }).then(function (response) {
+                    console.log(response);
+                    if (response && response.result && response.result.time) {
+                        thiz.positionCache[thiz.currentContentId] = response.result;
+                    }
+
+                    setTimeout(function () {
+                        thiz.trackCurrentPosition();
+                    }, KodiController.POSITION_TRACK_INTERVAL);
+                });
+            } else {
+                setTimeout(function () {
+                    thiz.trackCurrentPosition();
+                }, KodiController.POSITION_TRACK_INTERVAL);
+            }
+        })
+    };
 
 
-    module.exports = VLCController;
+
+    module.exports = KodiController;
 })();
 
 

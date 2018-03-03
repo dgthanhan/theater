@@ -36,7 +36,7 @@ SearchView.prototype.selectSource = function(service) {
     API.get("/api/search/options", {
       service: service.type
     }).then(function(options) {
-          var searchable = options.searchable || false;
+          var searchable = options.searchable ? true : false;
           if (searchable) {
               thiz.genreManager.setItems(options.genre || []);
               thiz.qualityManager.setItems(options.quality || []);
@@ -44,23 +44,15 @@ SearchView.prototype.selectSource = function(service) {
           }
           thiz.setEnabled(searchable);
 
-          thiz.search();
+          if (options.allowBlankKeyword || thiz.searchText.value.trim()) {
+              thiz.search();
+          } else {
+              AppView.instance.allContentListView.innerHTML = "";
+          }
     });
 }
 SearchView.prototype.setEnabled = function(searchable) {
-    if (!searchable) {
-        Dom.addClass(this.genreManager.node(), "Disabled");
-        Dom.addClass(this.qualityManager.node(), "Disabled");
-        Dom.addClass(this.sortByManager.node(), "Disabled");
-        Dom.addClass(this.searchTermBox, "Disabled");
-        Dom.addClass(this.filterBox, "Disabled");
-    } else {
-        Dom.removeClass(this.genreManager.node(), "Disabled");
-        Dom.removeClass(this.qualityManager.node(),  "Disabled");
-        Dom.removeClass(this.sortByManager.node(), "Disabled");
-        Dom.removeClass(this.searchTermBox, "Disabled");
-        Dom.removeClass(this.filterBox, "Disabled");
-    }
+    Dom.toggleClass(this.node(), "Disabled", !searchable);
 }
 
 SearchView.prototype.getCurrenSearchOptions = function() {

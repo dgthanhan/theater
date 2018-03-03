@@ -48,6 +48,9 @@ AppView.prototype.selectSource = function (service) {
     this.searchView.selectSource(service);
 };
 AppView.prototype.loadContentForService = function (service, options, contentListView) {
+    Dom.addClass(this.node(), "Searching");
+    var thiz = this;
+    
     API.get("/api/contents",
 
     { service: service.type,
@@ -61,7 +64,10 @@ AppView.prototype.loadContentForService = function (service, options, contentLis
       refresh: "true"})
 
       .then(function (contents) {
-        contentListView.setContents(contents);
+          Dom.removeClass(thiz.node(), "Searching");
+          contentListView.setContents(contents);
+    }).catch(function () {
+        Dom.removeClass(thiz.node(), "Searching");
     });
 };
 AppView.prototype.init = function(options) {
