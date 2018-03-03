@@ -22,9 +22,9 @@
         hub: new EventEmitter()
     };
 
+    Manager.registerService(require("./torrent/module.js"));
     Manager.registerService(require("./sopcast/module.js"));
     Manager.registerService(require("./youtube/module.js"));
-    Manager.registerService(require("./torrent/module.js"));
 
     Manager.getServices = function () {
         return services;

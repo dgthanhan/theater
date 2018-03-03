@@ -6,8 +6,7 @@
             return new Promise(function (resolve, reject) {
                 var keyword =  options.term || "";
                 if (keyword == null || keyword.length == 0) {
-                    reject(new Error("Empty search key"));
-                    return;
+                    keyword = "";
                 }
                 var genre = options.genre || "";
                 var quality = options.quality || "";
@@ -47,6 +46,7 @@
                     var contents = [];
                     if (movies != null && movies.length > 0) {
                         for (var movie of movies) {
+                            if (!movie.torrents || movie.torrents.length == 0) continue;
                             var content = {
                                 title: movie.title,
                                 imdb: movie.imdb_code,

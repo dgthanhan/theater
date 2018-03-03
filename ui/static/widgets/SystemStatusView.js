@@ -17,18 +17,6 @@ function SystemStatusView() {
     }, this.backendDetailButton);
 
     var thiz = this;
-    this.bind("click", function () {
-          thiz.isViewExpanded = !thiz.isViewExpanded;
-          if (thiz.isViewExpanded) {
-              Dom.removeClass(thiz.currentContentPane, "Disabled");
-          } else {
-              Dom.addClass(thiz.currentContentPane, "Disabled");
-          }
-          thiz.toggleViewButton.innerHTML = thiz.isViewExpanded ? "<i class='mdi mdi-chevron-down' />" : "<i class='mdi mdi-chevron-up' />";
-          thiz.infoControlPane.setAttribute("shrinked", !thiz.isViewExpanded);
-
-    }, this.toggleViewButton);
-
 }
 
 __extend(BaseApplicationView, SystemStatusView);
@@ -48,15 +36,12 @@ SystemStatusView.prototype.setStatus = function (status) {
             imageView.setUrl(url);
         }
 
-        Dom.setInnerText(this.title, status.content.title);
-        Dom.setInnerText(this.description, status.content.description);
-        this.originalLink.innerHTML = status.content.url;
-        this.originalLink.setAttribute("href", status.content.url);
+        Dom.setInnerText(this.contentTitle, status.content.title);
+        Dom.setInnerText(this.contentDescription, status.content.description);
 
-
-        this.currentContentPane.style.display = "flex";
+        this.contentInfo.style.display = "flex";
     } else {
-        this.currentContentPane.style.display = "none";
+        this.contentInfo.style.display = "none";
     }
 
     if (status.service) {

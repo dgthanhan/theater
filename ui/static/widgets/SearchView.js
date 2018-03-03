@@ -10,28 +10,17 @@ function SearchView() {
         }
     }, this.searchText);
 
-    this.mediaSourceManager.renderer = function(source) {
-        return source.name;
-    }
-    this.mediaSourceManager.options = {
-        onItemSelected: function(fromUserAction) {
-              if (!fromUserAction) return;
-              var s = SearchView.instance.mediaSourceManager.getSelectedItem();
-              console.log(s);
-              SearchView.instance.selectSource(s);
-        }
-    }
     this.genreManager.renderer = function(genre, forSelectedItem) {
       if (!genre) return "";
-      return forSelectedItem ?  "Genre: " + genre.name : genre.name;
+      return genre.name;
     }
     this.qualityManager.renderer = function(quality, forSelectedItem) {
       if (!quality) return "";
-      return forSelectedItem ? "Video Quality: " + quality.name : quality.name;
+      return quality.name;
     }
     this.sortByManager.renderer = function(sortBy, forSelectedItem) {
       if (!sortBy) return "";
-      return forSelectedItem ? "Sort by: " +  sortBy.name : sortBy.name;
+      return "Sort: " + sortBy.name;
     }
 }
 
@@ -40,17 +29,9 @@ __extend(BaseApplicationView, SearchView);
 SearchView.prototype.onAttached = function() {
     var appView = AppView.instance;
     var thiz = this;
-
-    API.get("/api/services").then(function (services) {
-
-        appView.services = services;
-        thiz.mediaSourceManager.setItems(services);
-
-        thiz.selectSource(thiz.mediaSourceManager.getSelectedItem());
-
-    });
 };
 SearchView.prototype.selectSource = function(service) {
+    this.service = service;
     var thiz = this;
     API.get("/api/search/options", {
       service: service.type
@@ -89,15 +70,14 @@ SearchView.prototype.getCurrenSearchOptions = function() {
       quality: this.qualityManager.getSelectedItem() == null ? '' : this.qualityManager.getSelectedItem().type,
       sortBy: this.sortByManager.getSelectedItem() == null ? '' : this.sortByManager.getSelectedItem().type,
       orderBy: "desc",
-      limit: 10
+      limit: 20
     }
     return options;
 }
 
 SearchView.prototype.search = function() {
     var options = this.getCurrenSearchOptions();
-    var service = this.mediaSourceManager.getSelectedItem();
     var appView = AppView.instance;
     appView.allContentListView.innerHTML = "";
-    appView.load(options, service);
+    appView.load(options, this.service);
 }

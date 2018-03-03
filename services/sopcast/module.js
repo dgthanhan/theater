@@ -40,20 +40,26 @@
 
         return new Promise(function (resolve, reject) {
             Promise.all(promises).then(function () {
-                var extra = require("fs").readFileSync("/home/pi/soplinks", {encoding: "utf8"});
-                if (extra) {
-                    var links = extra.split(/[\r\n]+/);
-                    for (var link of links) {
-                        contents.push({
-                            title: "Custom link",
-                            contentType: "video",
-                            duration: null,
-                            description: link,
-                            thumbnails: [],
-                            url: [link],
-                            extras: {}
-                        });
+                try {
+                    //TODO: implement this in a way that use can manage custom sopcast link via the web ui
+
+                    var extra = require("fs").readFileSync("/home/pi/soplinks", {encoding: "utf8"});
+                    if (extra) {
+                        var links = extra.split(/[\r\n]+/);
+                        for (var link of links) {
+                            contents.push({
+                                title: "Custom link",
+                                contentType: "video",
+                                duration: null,
+                                description: link,
+                                thumbnails: [],
+                                url: [link],
+                                extras: {}
+                            });
+                        }
                     }
+                } catch (e) {
+                    console.error(e);
                 }
 
                 if (contents.length == 0) {
