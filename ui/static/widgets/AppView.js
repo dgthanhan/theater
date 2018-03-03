@@ -1,7 +1,6 @@
 function AppView() {
     BaseApplicationView.call(this);
     AppView.instance = this;
-    this.bind("click", this.toggleSearch, this.searchButton);
     this.searchViewOpened = false;
 
     var thiz = this;
@@ -48,15 +47,6 @@ AppView.prototype.selectSource = function (service) {
 
     this.searchView.selectSource(service);
 };
-AppView.prototype.toggleSearch = function () {
-    this.searchViewOpened = !this.searchViewOpened;
-    if (this.searchViewOpened) {
-        Dom.removeClass(this.searchView.node(), "Disabled");
-    } else {
-        Dom.addClass(this.searchView.node(), "Disabled");
-    }
-    this.searchButton.innerHTML = this.searchViewOpened ? "<i class='mdi mdi-close' />" : "<i class='mdi mdi-magnify' />";
-}
 AppView.prototype.loadContentForService = function (service, options, contentListView) {
     API.get("/api/contents",
 

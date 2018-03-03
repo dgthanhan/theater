@@ -29,6 +29,9 @@ SystemStatusView.prototype.setStatus = function (status) {
     this.status = status;
     console.log(status);
     this.thumbnailList.innerHTML = "";
+
+    Dom.toggleClass(this.node(), "HasContent", status.content ? true : false);
+
     if (status.content) {
         for (var url of status.content.thumbnails) {
             var imageView = new ImageView().into(this.thumbnailList);
@@ -38,10 +41,6 @@ SystemStatusView.prototype.setStatus = function (status) {
 
         Dom.setInnerText(this.contentTitle, status.content.title);
         Dom.setInnerText(this.contentDescription, status.content.description);
-
-        this.contentInfo.style.display = "flex";
-    } else {
-        this.contentInfo.style.display = "none";
     }
 
     if (status.service) {
