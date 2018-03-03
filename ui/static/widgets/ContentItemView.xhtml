@@ -1,11 +1,9 @@
 <vbox>
     <style>
         @this {
-            background: #fff;
-            box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.3);
-            width: 12em;
-            border-radius: 0.2em;
-            overflow: hidden;
+            width: 8em;
+            position: relative;
+            color: #FFF;
         }
         @this:active {
             box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.8);
@@ -13,12 +11,15 @@
         @infoPane {
             padding: 0.6em;
         }
-        @thumbnailList {
-            width: 100%;
-            height: 7em;
-        }
         @thumbnailList > .widget_ImageView {
-            flex: 1 1 0em;
+            box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.3);
+            border-radius: 0.2em;
+            overflow: hidden;
+            width: 8em;
+            height: 12.5em;
+        }
+        @title {
+            font-size: 0.9em;
         }
         @description {
             font-size: 0.8em;
@@ -28,10 +29,24 @@
             text-overflow: ellipsis;
             overflow: hidden;
         }
+        @rating {
+            opacity: 0.7;
+            font-weight: bold;
+            font-size: 0.75em;
+            display: block;
+            padding: 0.1em 0.3em;
+            background: #DFB101;
+            color: #FFF;
+            align-self: center;
+
+            position: absolute;
+            top: 10.5em / 0.75;
+            right: 0.5em;
+        }
     </style>
     <hbox anon-id="thumbnailList"></hbox>
     <vbox anon-id="infoPane">
-        <strong anon-id="title"></strong>
+        <hbox><strong anon-id="title" flex="1"></strong><span anon-id="rating"></span></hbox>
         <span anon-id="description"></span>
     </vbox>
 </vbox>

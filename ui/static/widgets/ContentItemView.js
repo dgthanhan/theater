@@ -9,8 +9,14 @@ __extend(BaseApplicationView, ContentItemView);
 
 ContentItemView.prototype.setContent = function(content) {
     this.content = content;
+
+    var isFake = content.page;
+
     Dom.setInnerText(this.title, this.content.title);
-    Dom.setInnerText(this.description, this.content.description);
+    if (!isFake) {
+        Dom.setInnerText(this.rating, this.content.rating);
+        Dom.setInnerText(this.description, this.content.year);
+    }
 
     this.thumbnailList.innerHTML = "";
     if (this.content.thumbnails != null && this.content.thumbnails.length > 0) {
@@ -52,7 +58,7 @@ ContentItemView.prototype.play = function() {
               listView.node().removeChild(thiz.node());
 
               listView.setContents(moreItems, false);
-              
+
         });
     }
 };

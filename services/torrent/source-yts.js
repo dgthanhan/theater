@@ -56,6 +56,8 @@
                                 thumbnails: [movie.medium_cover_image],
                                 url: movie.torrents[0].url,
                                 hash: movie.torrents[0].hash,
+                                year: movie.year,
+                                rating: movie.rating,
                                 extras: {
                                     torrents: movie.torrents
                                 }
