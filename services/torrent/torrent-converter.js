@@ -127,7 +127,8 @@
 
             backendSummary = "Peers: " + activePeers.length + "/" + totalPeers.length
                 + ", Down: " + readableSpeed(swarmStats.downloadSpeed)
-                + ", Up: " + readableSpeed(swarmStats.uploadSpeed);
+                + ", Up: " + readableSpeed(swarmStats.uploadSpeed)
+                + ", " + (Math.round(swarmStats.downloaded * 100 / swarmStats.totalLength)) + "%";
         }
 
         return {
