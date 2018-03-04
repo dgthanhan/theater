@@ -93,12 +93,49 @@
         }
     };
 
+    function readableSpeed(speed) {
+        var k = Math.round(speed / 1024);
+        if (k > 1024) return (Math.round(k * 10 / 1024) / 10) + " MB/s";
+        return (Math.round(k * 10) / 10) + " KB/s";
+    }
+
     TorrentConverter.prototype.getFullStatus = function () {
+        var swarmStats = null;
+        var backendSummary = "";
+
+        if (this.flix && this.flix.swarm) {
+            var totalPeers = this.flix.swarm.wires
+
+            var activePeers = totalPeers.filter(function (wire) {
+                return !wire.peerChoking
+            })
+
+            var totalLength = this.flix.files.reduce(function (prevFileLength, currFile) {
+                return prevFileLength + currFile.length
+            }, 0)
+
+            swarmStats = {
+                totalLength: totalLength,
+                downloaded: this.flix.swarm.downloaded,
+                uploaded: this.flix.swarm.uploaded,
+                downloadSpeed: parseInt(this.flix.swarm.downloadSpeed(), 10),
+                uploadSpeed: parseInt(this.flix.swarm.uploadSpeed(), 10),
+                totalPeers: totalPeers.length,
+                activePeers: activePeers.length,
+                files: this.flix.files
+            };
+
+            backendSummary = "Peers: " + activePeers.length + "/" + totalPeers.length
+                + ", Down: " + readableSpeed(swarmStats.downloadSpeed)
+                + ", Up: " + readableSpeed(swarmStats.uploadSpeed);
+        }
+
         return {
             status: this.status,
             message: this.message,
             url: this.url,
-
+            backendSummary: backendSummary,
+            swarmStats: swarmStats
         }
     };
 

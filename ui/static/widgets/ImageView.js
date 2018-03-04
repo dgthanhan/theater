@@ -5,7 +5,6 @@ function ImageView() {
     this.centerCrop = true;
 
     this.bind("load", function () {
-        console.log("WxH", this.image.naturalWidth, this.image.naturalHeight);
         var w = this.image.naturalWidth;
         var h = this.image.naturalHeight;
         var W = this.node().offsetWidth;
@@ -30,9 +29,23 @@ __extend(BaseApplicationView, ImageView);
 ImageView.prototype.setCenterCrop = function(centerCrop) {
     this.centerCrop = centerCrop;
 };
+ImageView.prototype.onSizeChanged = function () {
+    console.log("size changed");
+}
+ImageView.prototype.onAttached = function() {
+    this.attached = true;
+    if (this.pendingURL) {
+        this.image.style.display = "none";
+        this.image.src = this.pendingURL;
+
+        this.pendingURL = null;
+    }
+};
 ImageView.prototype.setUrl = function(url) {
-    window.setTimeout(function () {
+    if (this.attached) {
         this.image.style.display = "none";
         this.image.src = url;
-    }.bind(this), 10);
+    } else {
+        this.pendingURL = url;
+    }
 };
