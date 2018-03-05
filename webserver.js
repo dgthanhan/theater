@@ -78,6 +78,20 @@
                 response.status(500).send(e);
             });
         });
+        server.get("/api/stop", function (request, response) {
+            serviceManager.stop().then(function () {
+                response.json({message: "OK"})
+            }).catch (function () {
+                console.error(e);
+                response.status(500).send(e);
+            });
+        });
+        server.get("/api/status", function (request, response) {
+            response.json(serviceManager.getCurrentStatus());
+        });
+
+
+        //Web-socket interface:
 
         server.ws("/status", function(ws, request) {
             ws.on("message", function(msg) {
@@ -85,10 +99,12 @@
             });
         });
 
+        //actively provide status as soon as a client is connected
         wsServer.getWss().on("connection", function (ws, request) {
             ws.send(JSON.stringify(serviceManager.getCurrentStatus()));
         });
 
+        //when backend signals a status change, broadcast that to all the connected ws clients
         serviceManager.hub.on("status", function (status) {
             broadcast(status);
         })

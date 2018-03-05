@@ -1,5 +1,6 @@
 (function () {
     const {State} = require("../common.js");
+    const fs = require("fs");
 
     function TorrentConverter() {
         this.status = State.Idle;
@@ -42,9 +43,35 @@
 
                     thiz.flix.server.once('listening', function () {
                         thiz.status = State.Serving;
-                        var url = 'http://' + thiz.flix.server.address().address + ":" + thiz.flix.server.address().port + '/' + (movieFileName ? movieFileName : "");
+                        var url = 'http://127.0.0.1:' + thiz.flix.server.address().port + '/' + (movieFileName ? movieFileName : "");
                         console.log("Flix listening: " + url);
-                        resolve(url);
+
+                        //try searching subtitle
+                        if (options && options.content && options.content.imdb) {
+                            const subSearch = require("yifysubtitles");
+                            options.content.subtitlePath = null;
+                            subSearch(options.content.imdb, {
+                                path: "/tmp",
+                                langs: ["en"],
+                                format: "srt"
+                            }).then(function (subtitles){
+                                if (subtitles && subtitles.length > 0) {
+                                    options.content.subtitlePath = subtitles[0].path;
+                                    console.log("Found subtitle: " + subtitles[0].path);
+
+
+                                    fs.createReadStream(options.content.subtitlePath).pipe(fs.createWriteStream("/tmp/theater-current.srt"));
+                                }
+                                resolve(url);
+                            }).catch(function (e) {
+                                console.log("Failed to search for subtitles.");
+                                console.error(e);
+                                resolve(url);
+                            });
+
+                        } else {
+                            resolve(url);
+                        }
                         console.log("Resolve called");
                     });
                     thiz.flix.server.on('error', function (error) {
@@ -66,12 +93,50 @@
         }
     };
 
+    function readableSpeed(speed) {
+        var k = Math.round(speed / 1024);
+        if (k > 1024) return (Math.round(k * 10 / 1024) / 10) + " MB/s";
+        return (Math.round(k * 10) / 10) + " KB/s";
+    }
+
     TorrentConverter.prototype.getFullStatus = function () {
+        var swarmStats = null;
+        var backendSummary = "";
+
+        if (this.flix && this.flix.swarm) {
+            var totalPeers = this.flix.swarm.wires
+
+            var activePeers = totalPeers.filter(function (wire) {
+                return !wire.peerChoking
+            })
+
+            var totalLength = this.flix.files.reduce(function (prevFileLength, currFile) {
+                return prevFileLength + currFile.length
+            }, 0)
+
+            swarmStats = {
+                totalLength: totalLength,
+                downloaded: this.flix.swarm.downloaded,
+                uploaded: this.flix.swarm.uploaded,
+                downloadSpeed: parseInt(this.flix.swarm.downloadSpeed(), 10),
+                uploadSpeed: parseInt(this.flix.swarm.uploadSpeed(), 10),
+                totalPeers: totalPeers.length,
+                activePeers: activePeers.length,
+                files: this.flix.files
+            };
+
+            backendSummary = "Peers: " + activePeers.length + "/" + totalPeers.length
+                + ", Down: " + readableSpeed(swarmStats.downloadSpeed)
+                + ", Up: " + readableSpeed(swarmStats.uploadSpeed)
+                + ", " + (Math.round(swarmStats.downloaded * 100 / swarmStats.totalLength)) + "%";
+        }
+
         return {
             status: this.status,
             message: this.message,
             url: this.url,
-
+            backendSummary: backendSummary,
+            swarmStats: swarmStats
         }
     };
 

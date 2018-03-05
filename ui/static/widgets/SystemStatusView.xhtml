@@ -3,7 +3,7 @@
         @this {
             background: #336699;
             color: #FFF;
-            padding: 1em;
+            padding: 0.5em;
         }
 
         @image {
@@ -11,16 +11,14 @@
             display: none;
         }
         @thumbnailList {
-            width: 10em;
-            height: 5em;
+            width: 3em;
+            height: 4em;
             margin-right: 1em;
+            border: solid 1px rgba(255, 255, 255, 0.2);
+            box-shadow: inset 0px 0px 3px rgba(0, 0, 0, 0.4);
         }
         @thumbnailList > .widget_ImageView {
             flex: 1 1 0em;
-        }
-        @currentContentPane,
-        @currentContentPane * {
-            overflow: hidden;
         }
         @description {
             text-overflow: ellipsis;
@@ -32,10 +30,7 @@
         }
 
         @infoControlPane {
-            margin-top: 1em;
             align-items: center;
-            border-top: solid 1px rgba(255, 255, 255, 0.1);
-            padding-top: 1em;
         }
         @playbackStatusPane {
         }
@@ -84,28 +79,65 @@
             line-height: 2em;
             color: #FFF;
         }
-        @backendDetailButton, @toggleViewButton {
-            width: 2em;
-            padding: 0em;
+        @backendDetailButton {
             display: inline-block;
             background: transparent;
             border-color: rgba(0, 0, 0, 0.1);
+        }
+        @this.HasContent @backendDetailButton  {
+            width: 2em;
+            padding: 0em;
         }
         @toggleViewButton {
             margin-right: 0.5em;
         }
 
+        @contentInfo {
+            margin-bottom: 0.2em;
+            line-height: 1em;
+        }
+        @contentInfo > * {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        @contentDescription {
+            opacity: 0.6;
+            font-size: 0.8em;
+            display: none;
+        }
+
+        @infoStatusPane {
+            flex: 1 1 1em;
+            width: 1em;
+            margin-right: 1em;
+        }
+
+        @this:not(.HasContent) @infoStatusPane,
+        @this:not(.HasContent) @thumbnailList,
+        @this.HasContent @noContentIndicator,
+        @this.HasContent @playbackButtonLabel {
+            display: none;
+        }
+
+        @noContentIndicator {
+            padding-left: 0.5em;
+            opacity: 0.3;
+        }
+
+        @playbackButtonLabel {
+            margin-left: 0.5em;
+        }
+
     </style>
-    <hbox anon-id="currentContentPane">
-        <hbox anon-id="thumbnailList"></hbox>
-        <vbox anon-id="textInfo" flex="1">
-            <strong anon-id="title"></strong>
-            <div anon-id="description" flex="1"></div>
-            <a anon-id="originalLink"></a>
-        </vbox>
-    </hbox>
     <hbox anon-id="infoControlPane">
-        <vbox flex="1">
+        <hbox anon-id="thumbnailList"></hbox>
+        <vbox flex="1" anon-id="infoStatusPane">
+            <vbox anon-id="contentInfo">
+                <strong anon-id="contentTitle"></strong>
+                <span anon-id="contentDescription"></span>
+            </vbox>
             <hbox anon-id="playbackStatusPane">
                 <i anon-id="idleIndicator" class="mdi mdi-radiobox-blank" />
                 <i anon-id="preparingIndicator" class="mdi mdi-run" />
@@ -116,7 +148,7 @@
                 <div anon-id="backendStatusMessage"></div>
             </hbox>
         </vbox>
-        <button anon-id="toggleViewButton"><i class="mdi mdi-chevron-down" /></button>
-        <button anon-id="backendDetailButton"><i class="mdi mdi-dots-vertical" /></button>
+        <vbox flex="1" anon-id="noContentIndicator">No content is currently playing.</vbox>
+        <button anon-id="backendDetailButton"><i class="mdi mdi-dots-vertical" /><span anon-id="playbackButtonLabel">Control Player...</span></button>
     </hbox>
 </vbox>

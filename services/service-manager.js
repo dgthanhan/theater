@@ -22,9 +22,9 @@
         hub: new EventEmitter()
     };
 
+    Manager.registerService(require("./torrent/module.js"));
     Manager.registerService(require("./sopcast/module.js"));
     Manager.registerService(require("./youtube/module.js"));
-    Manager.registerService(require("./torrent/module.js"));
 
     Manager.getServices = function () {
         return services;
@@ -54,7 +54,7 @@
                     resolve();
                 }
 
-                player.showNotification("Theater", "Theater is prearing channel: '" + content.title + "'. Sit back and relax please!");
+                player.showNotification(content.title, "Theater is prearing channel. Sit back and relax please!");
 
                 playbackOK = true;
                 playbackMessage = "Resolving media..";
@@ -62,9 +62,11 @@
 
                 service.start(content).then(function (resolvedContent) {
                     resolvedURL = resolvedContent.url;
+                    playbackOK = true;
                     playbackMessage = "Sending media to player...";
                     sayStatusChanged();
-                    player.play(resolvedContent.url).then(function () {
+                    console.log("resolvedContent", content);
+                    player.play(resolvedContent.url, {live: resolvedContent.live, subtitlePath: resolvedContent.subtitlePath, id: url, content: resolvedContent}).then(function () {
                         playbackMessage = "Media sent to player";
                         sayStatusChanged();
                     }).catch(function (e) {
@@ -98,7 +100,7 @@
 
             playbackMessage = "Sending media to player...";
             sayStatusChanged();
-            player.play(resolvedURL).then(function () {
+            player.play(resolvedURL, {live: currentContent && currentContent.live}).then(function () {
                 playbackMessage = "Media sent to player";
                 sayStatusChanged();
             }).catch(function (e) {
@@ -107,6 +109,17 @@
                 console.error(e);
                 sayStatusChanged();
             });
+        });
+    };
+    Manager.stop = function () {
+        return new Promise(function (resolve, reject) {
+            resolve();
+            player.stop();
+            if (activeService) activeService.terminate();
+            currentContent = null;
+            resolvedURL = null;
+
+            sayStatusChanged();
         });
     };
 
