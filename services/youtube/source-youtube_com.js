@@ -10,7 +10,7 @@
                     reject(new Error("Empty search key"));
                     return;
                 }
-                var url = "https://www.googleapis.com/youtube/v3/search?q=" + keyword + "&part=snippet&key=AIzaSyA94gwn5hghSfnrqBuKEWnrM_UcEwnrowI"
+                var url = "https://www.googleapis.com/youtube/v3/search?q=" + encodeURIComponent(keyword) + "&part=snippet&key=AIzaSyA94gwn5hghSfnrqBuKEWnrM_UcEwnrowI"
 
                 var genre = options.genre || "";
                 if (genre.length > 0 ) {
@@ -18,7 +18,7 @@
                 }
 
                 var quality = options.quality || "";
-                
+
                 if (quality.length > 0 && genre === "video") {
                     url += "&videoDefinition=" + quality
                 }
