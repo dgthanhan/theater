@@ -53,8 +53,9 @@
     TorrentService.prototype.getSearchFilterOptions = function() {
         return {
           searchable: true,
+          allowBlankKeyword: true,
           genre: [
-                    {name: "All Genre", type: ""},
+                    {name: "All Genres", type: ""},
                     {name: "Action",    type: "Action"},
                     {name: "Animation", type: "Animation"},
                     {name: "Advanture", type: "Advanture"},
@@ -85,7 +86,7 @@
                     {name: "Rating",      type: "rating"}
                   ],
           quality: [
-                    {name: "All Quality", type: ""},
+                    {name: "All Qualities", type: ""},
                     {name: "HD 720p",     type: "720p"},
                     {name: "HD 1080p",    type: "1080p"},
                     {name: "3D",          type: "3D"}

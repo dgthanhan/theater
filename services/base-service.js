@@ -23,13 +23,14 @@ BaseService.prototype.start = function (content) {
             try {
                 thiz.converter.destroy();
             } catch (e) {}
-        } else {
-            thiz.converter = thiz.createConverter();
         }
+        thiz.converter = thiz.createConverter();
 
-        thiz.converter.convert(content.url).then(function (url) {
+        thiz.converter.convert(content.url, {content: content}).then(function (url) {
             resolve({
                 url: url,
+                subtitlePath: content.subtitlePath,
+                live: thiz.isLiveContent(content),
                 content: content
             })
         }).catch(function (e) {
@@ -43,6 +44,9 @@ BaseService.prototype.terminate = function () {
             this.converter.destroy();
         } catch (e) {}
     }
+};
+BaseService.prototype.isLiveContent = function (content) {
+    return false;
 };
 
 BaseService.prototype.findCachedContent = function (url) {

@@ -1,39 +1,43 @@
 <vbox>
     <style>
-        @searchBox {
-            padding: 1em;
+        @this {
+            padding: 0.7em;
         }
 
-        @searchTermBox {
-            padding-left: 1em;
-            padding-right: 1em;
-            margin-bottom: 1em;
+        @this.Disabled {
+            display: none;
         }
-        @searchBox hbox:last-child {
-          margin-top: 0.5em;
+
+        @this > hbox + *,
+        @this > vbox > * + * {
+            margin-top: 0.5em;
         }
-        @searchTermBox button {
-          margin-left: 0.5em;
+
+        @this > * > * + *,
+        @this hbox > * + * {
+            margin-left: 0.5em;
         }
-        .AnonId_genreManager {
-          margin-left: 0.5em;
+        .widget_ComboManager {
+            padding: 0.2em;
+            border: none;
+            box-shadow: none;
+            background: transparent;
+            color: #336699;
+            text-decoration: underline;
+            font-size: 0.85em;
         }
-        .AnonId_sortByManager {
-          margin-left: 0.5em;
+
+        * + .widget_ComboManager {
+            margin-left: 1em;
         }
     </style>
-    <vbox anon-id="searchBox">
-        <hbox>
-            <ui:ComboManager flex="1" anon-id="mediaSourceManager"/>
-            <ui:ComboManager flex="1" anon-id="genreManager"/>
-        </hbox>
-        <hbox anon-id="filterBox">
-         <ui:ComboManager flex="1" anon-id="qualityManager"/>
-         <ui:ComboManager flex="1" anon-id="sortByManager"/>
-       </hbox>
-    </vbox>
     <hbox anon-id="searchTermBox">
-        <hbox flex="1"><input anon-id="searchText" flex="1" type="text" placeholder="Search everything..."/></hbox>
-        <button type="button" anon-id="doSearchButton"><i class="mdi mdi-magnify" /></button>
+        <hbox flex="1"><input anon-id="searchText" flex="1" type="text" placeholder="Keywords to search..."/></hbox>
+        <button type="button" anon-id="doSearchButton"><i class="mdi mdi-magnify" /> Search</button>
+    </hbox>
+    <hbox anon-id="searchBox">
+        <ui:ComboManager anon-id="genreManager"/>
+        <ui:ComboManager anon-id="qualityManager"/>
+        <ui:ComboManager anon-id="sortByManager"/>
     </hbox>
 </vbox>

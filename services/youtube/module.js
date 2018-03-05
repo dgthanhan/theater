@@ -77,8 +77,9 @@
     YoutubeService.prototype.getSearchFilterOptions = function() {
         return {
           searchable: true,
+          allowBlankKeyword: false,
           genre:  [
-                    {name: "Any",    type: "any"},
+                    {name: "All Types",    type: "any"},
                     {name: "Eposide", type: "eposide"},
                     {name: "Movie", type: "movie"}
                   ],
@@ -90,7 +91,7 @@
                     {name: "View Count",  type: "viewCount"}
                   ],
           quality: [
-                    {name: "Any",     type: "any"},
+                    {name: "All Qualities",     type: "any"},
                     {name: "Standard",type: "standard"},
                     {name: "High",    type: "high"},
                   ]

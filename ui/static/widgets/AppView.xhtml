@@ -4,6 +4,12 @@
             padding: 0em;
             font-size: 1.1em;
             background: #F7F7F7;
+
+            position: relative;
+        }
+
+        button {
+            box-shadow: none;
         }
 
         @allContentListView > strong {
@@ -38,17 +44,31 @@
         }
         @header {
             background: #336699;
-            padding: 0.3em;
-            align-items: center;
             color: #FFF;
-            z-index: 1;
+            z-index: 3;
             box-shadow: 0px 0px 1em 0.1em rgba(0, 0, 0, 0.4);
         }
         @header i {
             color: #FFF;
         }
+        @appIcon {
+            align-self: center;
+            margin-left: 0.5em;
+        }
+        @appIcon i,
+        @appName {
+            align-self: center;
+            color: #07325D;
+            text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.1);
+        }
+        @appIcon i {
+            font-size: 1.5em;
+        }
+        @appName {
+            line-height: 1.5em;
+        }
         @header > strong {
-            padding: 0.7em;
+            padding: 0.3em;
         }
         @header button {
             min-width: 2em;
@@ -57,20 +77,74 @@
             display: inline-block;
             background: transparent;
             border-color: rgba(0, 0, 0, 0.1);
-            margin-left: 0.5em;
+            margin: 0.3em;
+            margin-left: 0em;
+            align-self: center;
         }
-        .Disabled {
-            visibility: collapse;
+        @sourceTab {
+            margin: 0em 2em;
+        }
+        @sourceTab > hbox {
+            font-size: 0.8em;
+            font-weight: bold;
+            padding: 1em;
+            text-transform: uppercase;
+            align-items: center;
+        }
+        @sourceTab > hbox {
+            opacity: 0.5;
+            border: solid 2px transparent;
+        }
+
+        @sourceTab > hbox.Active {
+            opacity: 1;
+            border-bottom-color: #FFF;
+            transition: all 0.3s ease;
+        }
+        @sourceTab > hbox:active {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+
+        @searchView {
+            box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.2);
+            z-index: 2;
+        }
+
+        @allContentListView {
+            z-index: 1;
+            background: #777;
+        }
+        @searchingIndicator {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        @this:not(.Searching) @searchingIndicator {
             display: none;
+        }
+
+        @searchingIndicator span {
+            padding: 1em;
+            background: rgba(0, 0, 0, 0.8);
+            color: #FFF;
         }
     </style>
     <hbox anon-id="header">
-        <strong flex="1">Theater</strong>
-        <button anon-id="searchButton"><i class="mdi mdi-magnify" /></button>
-        <button anon-id="refreshButton"><i class="mdi mdi-reload" /></button>
+        <strong anon-id="appIcon"><i class="mdi mdi-movie" /></strong>
+        <strong anon-id="appName" flex="1">Theater</strong>
+        <hbox anon-id="sourceTab"></hbox>
     </hbox>
-    <ui:SearchView anon-id="searchView" class="Disabled"/>
+    <ui:SearchView anon-id="searchView"/>
     <vbox anon-id="allContentListView" flex="1">
     </vbox>
+    <hbox anon-id="searchingIndicator">
+        <span>Searching...</span>
+    </hbox>
     <ui:SystemStatusView />
 </vbox>
