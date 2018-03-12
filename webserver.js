@@ -9,8 +9,11 @@
     var wsServer = null;
     var player = null;
     var statusWSEnpoint = null;
-    var lanIP = null;
-
+    var exportedServer = {
+        start: start,
+        setPlayer: setPlayer,
+        lanIP: null
+    }
     function start() {
         server = express();
         wsServer = addWSSupport(server);
@@ -116,7 +119,7 @@
         server.listen(port, ip);
         console.log("Web server started.");
 
-        lanIP = ip;
+        exportedServer.lanIP = ip;
     }
 
     function setPlayer(providedPlayer) {
@@ -131,9 +134,5 @@
     }
 
 
-    module.exports = {
-        start: start,
-        setPlayer: setPlayer,
-        lanIP: lanIP
-    };
+    module.exports = exportedServer;
 })();
