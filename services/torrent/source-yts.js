@@ -47,6 +47,24 @@
                     if (movies != null && movies.length > 0) {
                         for (var movie of movies) {
                             if (!movie.torrents || movie.torrents.length == 0) continue;
+                            var torrent = null;
+                            for (var t of movie.torrents) {
+                                if (t.quality == "1080p") {
+                                    torrent = t;
+                                    break;
+                                }
+                            }
+                            if (!torrent) {
+                                for (var t of movie.torrents) {
+                                    if (t.quality == "720p") {
+                                        torrent = t;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (!torrent) torrent = movie.torrents[0];
+
                             var content = {
                                 title: movie.title,
                                 imdb: movie.imdb_code,
@@ -54,8 +72,8 @@
                                 duration: movie.runtime * 60,
                                 description: movie.summary,
                                 thumbnails: [movie.medium_cover_image],
-                                url: movie.torrents[0].url,
-                                hash: movie.torrents[0].hash,
+                                url: torrent.url,
+                                hash: torrent.hash,
                                 year: movie.year,
                                 rating: movie.rating,
                                 extras: {
