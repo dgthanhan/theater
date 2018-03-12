@@ -16,7 +16,9 @@
 
         webServer.setPlayer(player);
         webServer.start();
-        player.showNotification("Theater", "Theater application: " + webServer.lanIP);
+        setTimeout(function () {
+            player.showNotification("Theater", "Theater application: " + webServer.lanIP);
+        }, 2000);
     }
 
 /*
