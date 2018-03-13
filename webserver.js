@@ -9,7 +9,11 @@
     var wsServer = null;
     var player = null;
     var statusWSEnpoint = null;
-
+    var exportedServer = {
+        start: start,
+        setPlayer: setPlayer,
+        lanIP: null
+    }
     function start() {
         server = express();
         wsServer = addWSSupport(server);
@@ -110,10 +114,12 @@
         })
 
         var ip = common.findLANAddress();
-	var port = 12002;
+        var port = 12002;
         console.log("Listen at: " + ip + ":" + port);
         server.listen(port, ip);
         console.log("Web server started.");
+
+        exportedServer.lanIP = ip;
     }
 
     function setPlayer(providedPlayer) {
@@ -128,8 +134,5 @@
     }
 
 
-    module.exports = {
-        start: start,
-        setPlayer: setPlayer
-    };
+    module.exports = exportedServer;
 })();
