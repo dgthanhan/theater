@@ -77,7 +77,7 @@
     YoutubeService.prototype.getSearchFilterOptions = function() {
         return {
           searchable: true,
-          allowBlankKeyword: false,
+          allowBlankKeyword: true,
           genre:  [
                     {name: "All Types",    type: "any"},
                     {name: "Eposide", type: "eposide"},

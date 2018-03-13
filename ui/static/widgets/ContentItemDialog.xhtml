@@ -1,0 +1,39 @@
+<vbox>
+    <style>
+        @this {
+            min-width: 20em;
+        }
+        @this > * + * {
+            margin-top: 1em;
+        }
+        @contentItemView > .AnonId_thumbnailList > .widget_ImageView {
+            width: 20em;
+            height: 12.5em;
+        }
+        @contentItemView .AnonId_infoPane {
+            color: #000;
+        }
+        @albumArt {
+
+        }
+        @controlPane > button:not(:last-child) {
+            border-top-right-radius: 0em;
+            border-bottom-right-radius: 0em;
+        }
+        @controlPane > button:not(:first-child) {
+            border-top-left-radius: 0em;
+            border-bottom-left-radius: 0em;
+        }
+        @controlPane > button + button {
+
+        }
+    </style>
+    <hbox anon-id="albumArt">
+        <ui:ContentItemView anon-id="contentItemView"/>
+    </hbox>
+    <ui:ComboManager anon-id="linkCombo"/>
+    <hbox anon-id="controlPane">
+        <button anon-id="killButton" flex="1"><i class="mdi mdi-stop" /> Stop</button>
+        <button anon-id="playButton" flex="1"><i class="mdi mdi-play" /> Play</button>
+    </hbox>
+</vbox>

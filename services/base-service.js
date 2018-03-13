@@ -15,6 +15,10 @@ BaseService.prototype.getContents = function (options) {
     }.bind(this));
 };
 
+BaseService.prototype.fetchPlaybackInfo = function(options) {
+    return {};
+}
+
 BaseService.prototype.start = function (content) {
     var thiz = this;
 
@@ -25,8 +29,9 @@ BaseService.prototype.start = function (content) {
             } catch (e) {}
         }
         thiz.converter = thiz.createConverter();
+        var url = content.selectedUrl && content.selectedUrl.length > 0 ? content.selectedUrl : content.url;
 
-        thiz.converter.convert(content.url, {content: content}).then(function (url) {
+        thiz.converter.convert(url, {content: content}).then(function (url) {
             resolve({
                 url: url,
                 subtitlePath: content.subtitlePath,

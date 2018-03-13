@@ -13,7 +13,7 @@
                 var sortBy = options.sortBy || "";
                 var page = options.page || 1;
                 var limit = options.limit || 10;
-                var url = "https://yts.ag/api/v2/list_movies.json?sort_by=year&query_term=" + keyword;
+                var url = "https://yts.ag/api/v2/list_movies.json?sort_by=year&query_term=" + encodeURIComponent(keyword);
                 if (genre.length > 0) {
                     url = url + "&genre=" + genre;
                 }
