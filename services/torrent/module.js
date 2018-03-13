@@ -19,6 +19,13 @@
 
     TorrentService.prototype = new BaseService();
 
+    TorrentService.prototype.fetchPlaybackInfo = function(options) {
+        var content = this.cache[options.url];
+        if (!content) return {id: 0};
+        content.playableLinks = content.extras.torrents;
+        return content;
+    }
+
     TorrentService.prototype.findAvailableContents = function (options) {
         var promises = [];
         var contents = [];

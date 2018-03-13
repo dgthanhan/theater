@@ -29,11 +29,13 @@ ContentItemView.prototype.setContent = function(content) {
 };
 
 ContentItemView.prototype.play = function() {
+
     var thiz = this;
     if (!this.content.page) {
-      API.get("/api/play", { service: this.content.type, url: this.content.url}).then(function () {
-          console.log("Play requested");
-      });
+
+        var playDialog = new ContentItemDialog();
+        playDialog.open(this.content);
+
     } else if (this._contentLisView) {
         var searchView = SearchView.instance;
         var options = searchView.getCurrenSearchOptions();

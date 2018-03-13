@@ -15,6 +15,7 @@
                 }
 
                 console.log("DISCOVERY DATA SUBMITTED.");
+                console.log("SERVICE URL: " + serviceUrl);
             });
         } finally {
             setTimeout(submit, 60000);

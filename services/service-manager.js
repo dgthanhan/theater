@@ -29,7 +29,10 @@
     Manager.getServices = function () {
         return services;
     };
-    Manager.play = function (type, url) {
+    Manager.play = function (type, url, selectedUrl) {
+        if (selectedUrl) {
+            console.log("Force play url: " + selectedUrl);
+        }
         return new Promise(function (resolve, reject) {
             playbackMessage = "Stopping player...";
             sayStatusChanged();
@@ -60,7 +63,13 @@
                 playbackMessage = "Resolving media..";
                 sayStatusChanged();
 
+                if (selectedUrl) {
+                    content.selectedUrl = selectedUrl;
+                }
                 service.start(content).then(function (resolvedContent) {
+
+                    console.log("resolvedContent Before:", resolvedContent);
+
                     resolvedURL = resolvedContent.url;
                     playbackOK = true;
                     playbackMessage = "Sending media to player...";

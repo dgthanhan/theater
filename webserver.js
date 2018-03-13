@@ -65,9 +65,23 @@
             var options = service.getSearchFilterOptions();
             response.json(options);
         });
+        server.get("/api/fetch/playback", function (request, response) {
+            var service = serviceManager.getService(request.query.service);
+            var info = service.fetchPlaybackInfo({url: request.query.url});
+            if (info && info.playableLinks && info.playableLinks.length) {
+
+                info.playableLinks.sort(function(a, b) {
+                    var q1 = a.quality ? parseInt(a.quality.replace("p", ""), 10) : 0;
+                    var q2 = b.quality ? parseInt(b.quality.replace("p", ""), 10) : 0;
+                    return q2 - q1;
+                });
+            }
+            response.json(info);
+        });
 
         server.get("/api/play", function (request, response) {
-            serviceManager.play(request.query.service, request.query.url).then(function () {
+            var selectedUrl = request.query.selectedUrl ? request.query.selectedUrl : null;
+            serviceManager.play(request.query.service, request.query.url, selectedUrl).then(function () {
                 response.json({message: "OK"})
             }).catch (function () {
                 console.error(e);
