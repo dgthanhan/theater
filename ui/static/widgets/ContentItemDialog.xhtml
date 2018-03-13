@@ -1,39 +1,106 @@
-<vbox>
+<vbox flex="1">
     <style>
         @this {
-            min-width: 20em;
         }
         @this > * + * {
             margin-top: 1em;
         }
-        @contentItemView > .AnonId_thumbnailList > .widget_ImageView {
-            width: 20em;
-            height: 12.5em;
+        @posterImage {
+            margin-right: 1em;
+            height: 15em;
+            width: 15em/1.5;
         }
-        @contentItemView .AnonId_infoPane {
-            color: #000;
+        @footerPane {
+            margin-top: 1em;
         }
-        @albumArt {
-
+        .SecondaryText {
+            color: #c3c3c3;
         }
-        @controlPane > button:not(:last-child) {
-            border-top-right-radius: 0em;
-            border-bottom-right-radius: 0em;
+        @controlPane {
+            margin-left: 0.5em;
+            justify-content: center;
         }
-        @controlPane > button:not(:first-child) {
-            border-top-left-radius: 0em;
-            border-bottom-left-radius: 0em;
+        @mediaTitle {
+            font-size: 1.2em;
+            font-weight: bold;
+            width: 17em * 0.9/1.2;
         }
-        @controlPane > button + button {
-
+        @mediaDescription {
+            margin-top: 0.5em;
+            font-size: 0.9em;
+            max-height: 7.4em;
+            text-overflow: ellipsis;
+            line-height: 1.1;
+            overflow: hidden;
+            width: 17em;
+        }
+        .IMDb {
+            background-image: url('style/images/imdb.png');
+            background-size: cover;
+            width: 2em;
+            height: 1em;
+            margin-right: 0.5em;
+        }
+        @imdbLink {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+        @imdbLink > * {
+            line-height: 1em;
+        }
+        @moreInfoPane > * + * {
+            padding-left: 1em;
+            margin-left: 1em;
+            border-left: solid 1px #CCC;
+        }
+        @moreInfoPane {
+            margin-top: 0.5em;
+            align-items: center;
+        }
+        .NoResult {
+            display: none;
+        }
+        @playButton {
+            align-self: flex-end;
+            margin-left: 0.5em;
+        }
+        @playButton.NoPlayableLinks {
+            margin-left: 0em;
         }
     </style>
-    <hbox anon-id="albumArt">
-        <ui:ContentItemView anon-id="contentItemView"/>
-    </hbox>
-    <ui:ComboManager anon-id="linkCombo"/>
-    <hbox anon-id="controlPane">
-        <button anon-id="killButton" flex="1"><i class="mdi mdi-stop" /> Stop</button>
-        <button anon-id="playButton" flex="1"><i class="mdi mdi-play" /> Play</button>
+    <hbox>
+        <img anon-id="posterImage" />
+        <vbox>
+            <vbox anon-id="headerInfo" flex="1">
+                <vbox>
+                    <hbox><strong anon-id="mediaTitle" flex="1"></strong></hbox>
+                    <span anon-id="mediaDescription"></span>
+                </vbox>
+                <hbox anon-id="moreInfoPane">
+                    <hbox anon-id="imdbPane">
+                        <a href="" anon-id="imdbLink" target="_blank">
+                            <img class="IMDb"/>
+                            <span anon-id="rating"></span>
+                        </a>
+                    </hbox>
+                    <hbox>
+                        <span anon-id="year"></span>
+                    </hbox>
+                    <hbox>
+                        <span anon-id="duration"></span>
+                    </hbox>
+                </hbox>
+            </vbox>
+            <hbox anon-id="footerPane">
+                <vbox flex="1" anon-id="formatPane">
+                    <span class="SecondaryText">Available formats:</span>
+                    <ui:ComboManager anon-id="linkCombo"/>
+                </vbox>
+                <button anon-id="playButton" role="primary"><i class="mdi mdi-play" /> Play</button>
+            </hbox>
+        </vbox>
     </hbox>
 </vbox>

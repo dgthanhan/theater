@@ -14,10 +14,15 @@ ContentItemView.prototype.setContent = function(content) {
 
     Dom.setInnerText(this.title, this.content.title);
     if (!isFake) {
-        Dom.setInnerText(this.rating, this.content.rating);
-        Dom.setInnerText(this.description, this.content.year);
+        if (this.content.rating) {
+            Dom.setInnerText(this.rating, this.content.rating);
+        } else {
+            Dom.addClass(this.rating, "NoInfo");
+        }
+        Dom.setInnerText(this.description, this.content.year || "");
+    } else {
+        Dom.addClass(this.rating, "NoInfo");
     }
-
     this.thumbnailList.innerHTML = "";
     if (this.content.thumbnails != null && this.content.thumbnails.length > 0) {
       for (var url of this.content.thumbnails) {
@@ -31,7 +36,8 @@ ContentItemView.prototype.setContent = function(content) {
 ContentItemView.prototype.play = function() {
 
     var thiz = this;
-    if (!this.content.page) {
+
+    if (!this.content.page && this._contentLisView) {
 
         var playDialog = new ContentItemDialog();
         playDialog.open(this.content);

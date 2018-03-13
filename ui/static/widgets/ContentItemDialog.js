@@ -1,6 +1,6 @@
 function ContentItemDialog() {
     BaseDialog.call(this);
-    this.title = "Play Media";
+    this.title = "Media Information";
     var thiz = this;
     this.bind("click", function () {
         var link = thiz.linkCombo.getSelectedItem();
@@ -14,7 +14,7 @@ function ContentItemDialog() {
     }, this.killButton);
 
     this.linkCombo.renderer = function(item, selected) {
-        return item.quality && item.size ? (item.quality  + " (" + item.size + ")") : item.url;
+        return item.quality;
     }
 }
 
@@ -29,18 +29,32 @@ ContentItemDialog.prototype.getDialogActions = function () {
 };
 ContentItemDialog.prototype.setup = function (media) {
     this.content = media;
-    this.contentItemView.setContent(this.content)
+    console.log(media);
+    this.posterImage.src = this.content.thumbnails[0];
+    if (this.content.imdb) {
+        this.imdbLink.href = "http://www.imdb.com/title/" + this.content.imdb + "/";
+    } else {
+        Dom.addClass(this.imdbPane, "NoResult")
+    }
+    Dom.setInnerText(this.mediaTitle, this.content.title);
+    Dom.setInnerText(this.mediaDescription, this.content.description || "");
+    Dom.setInnerText(this.rating, this.content.rating || "");
+    Dom.setInnerText(this.year, this.content.year || "");
+    if (this.content.duration > 0) {
+        Dom.setInnerText(this.duration, (this.content.duration / 60) + " mins");
+    }
     var thiz = this;
     API.get("/api/fetch/playback", {
       service: this.content.type,
       url: this.content.url
     }).then(function (result) {
-        var videos = result.playableLinks;
-
-        console.log(videos);
-
-        thiz.linkCombo.setItems(videos);
-
+        var videos = result ? result.playableLinks : null;
+        if (!videos) {
+            Dom.addClass(thiz.formatPane, "NoResult");
+            Dom.addClass(thiz.playButton, "NoPlayableLinks");
+        } else {
+            thiz.linkCombo.setItems(videos);
+        }
     });
 
 };
