@@ -50,7 +50,7 @@ AppView.prototype.selectSource = function (service) {
 AppView.prototype.loadContentForService = function (service, options, contentListView) {
     Dom.addClass(this.node(), "Searching");
     var thiz = this;
-    
+
     API.get("/api/contents",
 
     { service: service.type,
@@ -58,8 +58,9 @@ AppView.prototype.loadContentForService = function (service, options, contentLis
       quality:options.quality,
       genre: options.genre,
       sortBy: options.sortBy,
-      orderBy: options.orderBy,
+      order: options.order,
       limit: options.limit,
+      source: options.source,
       page: options.page || "",
       refresh: "true"})
 

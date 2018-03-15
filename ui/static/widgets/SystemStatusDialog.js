@@ -26,7 +26,7 @@ SystemStatusDialog.prototype.setup = function (status) {
     if (status && status.service && status.service.backend) {
         var backend = status.service.backend;
         Dom.setInnerText(this.streamURL, backend.url ? backend.url : "");
-        this.backendStatus.innerHTML = Dom.htmlEncode(backend.message) + "<br/>" + Dom.htmlEncode(backend.details);
+        this.backendStatus.innerHTML = Dom.htmlEncode(backend.message || "") + "<br/>" + Dom.htmlEncode(backend.details || "");
     } else {
         Dom.setInnerText(this.streamURL, "");
         this.backendStatus.innerHTML = "(Status not available)";

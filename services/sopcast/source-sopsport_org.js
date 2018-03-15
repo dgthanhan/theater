@@ -4,6 +4,14 @@
 
     var SopsportOrg = {
         name: "sopsport.org",
+        getSearchFilterOptions: function() {
+            return {
+              searchable: false,
+              genre: [],
+              sortBy: [],
+              quality: []
+            };
+        },
         find: function () {
             return new Promise(function (resolve, reject) {
                 request("http://sopsport.org/", function (error, response, body) {
