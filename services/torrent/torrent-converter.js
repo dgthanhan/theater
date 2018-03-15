@@ -29,11 +29,10 @@
                     var movieFileName = "";
                     thiz.flix = null;
                     try {
-                        var largestFile = torrent.files.reduce(function (a, b) {
+                        var largestFile = torrent.files ? torrent.files.reduce(function (a, b) {
                             return a.length > b.length ? a : b;
-                        });
-
-                        movieFileName = largestFile.name;
+                        }) : null;
+                        movieFileName = largestFile ? largestFile.name : "";
 
                         thiz.flix = peerflix(torrent, {fileName: movieFileName});
                     } catch (e) {
@@ -142,3 +141,4 @@
 
     module.exports = TorrentConverter;
 })();
+

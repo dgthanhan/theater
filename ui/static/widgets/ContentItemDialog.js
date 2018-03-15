@@ -40,6 +40,8 @@ ContentItemDialog.prototype.setup = function (media) {
     Dom.setInnerText(this.mediaDescription, this.content.description || "");
     Dom.setInnerText(this.rating, this.content.rating || "");
     Dom.setInnerText(this.year, this.content.year || "");
+    var playText = "Play" + (this.content.watching && this.content.watching > 0 ? " (" + this.content.watching + "+)" : " (+1)");
+    this.playButton.innerHTML = "<i class=\"mdi mdi-play\" />" + playText;
     if (this.content.duration > 0) {
         Dom.setInnerText(this.duration, (this.content.duration / 60) + " mins");
     }

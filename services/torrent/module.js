@@ -11,6 +11,7 @@
         this.name = "Torrent";
         this.converter = null;
         this.sources = [
+            require("./source-popcorn.js"),
             require("./source-yts.js")
         ];
     }
@@ -29,12 +30,23 @@
     TorrentService.prototype.findAvailableContents = function (options) {
         var promises = [];
         var contents = [];
+        var lookupIn = null;
+        var sourceName = options.source || "yts";
         for (var source of this.sources) {
-            var promise = source.find(options).then(function(items) {
-                contents = contents.concat(items);
-            });
-            promises.push(promise);
+            if (sourceName == source.name) {
+                lookupIn = source;
+                break;
+            }
         }
+
+        if (!lookupIn) {
+            resolve([]);
+            return;
+        }
+        var promise = lookupIn.find(options).then(function(items) {
+            contents = contents.concat(items);
+        });
+        promises.push(promise);
 
         var thiz = this;
 
@@ -57,48 +69,6 @@
     TorrentService.prototype.createConverter = function (content) {
         return new TorrentConverter();
     };
-    TorrentService.prototype.getSearchFilterOptions = function() {
-        return {
-          searchable: true,
-          allowBlankKeyword: true,
-          genre: [
-                    {name: "All Genres", type: ""},
-                    {name: "Action",    type: "Action"},
-                    {name: "Animation", type: "Animation"},
-                    {name: "Advanture", type: "Advanture"},
-                    {name: "Biography", type: "Biography"},
-                    {name: "Comedy",    type: "Comedy"},
-                    {name: "Crime",     type: "Crime"},
-                    {name: "Documentary", type: "Documentary"},
-                    {name: "Drama",     type: "Drama"},
-                    {name: "Family",    type: "Family"},
-                    {name: "Fantasy",   type: "Fantasy"},
-                    {name: "Film-Noir", type: "Film-Noir"},
-                    {name: "History",   type: "History"},
-                    {name: "Horror",    type: "Horror"},
-                    {name: "Music",     type: "Music"},
-                    {name: "Musical",   type: "Musical"},
-                    {name: "Mystery",   type: "Mystery"},
-                    {name: "Romance",   type: "Romance"},
-                    {name: "Sci-Fi",    type: "Sci-Fi"},
-                    {name: "Sport",     type: "Sport"},
-                    {name: "Thriller",  type: "Thriller"},
-                    {name: "War",       type: "War"},
-                    {name: "Western",   type: "Western"}
-                  ],
-          sortBy: [
-                    {name: "Date Added",  type: "date_added"},
-                    {name: "Title",       type: "title"},
-                    {name: "Year",        type: "year"},
-                    {name: "Rating",      type: "rating"}
-                  ],
-          quality: [
-                    {name: "All Qualities", type: ""},
-                    {name: "HD 720p",     type: "720p"},
-                    {name: "HD 1080p",    type: "1080p"},
-                    {name: "3D",          type: "3D"}
-                  ]
-        };
-    }
+    
     module.exports = new TorrentService();
 })();

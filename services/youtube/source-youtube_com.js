@@ -2,14 +2,34 @@
     const request = require("request");
     var YoutubeCom = {
         name: "youtube.com",
+        getSearchFilterOptions: function() {
+            return {
+              searchable: true,
+              allowBlankKeyword: true,
+              genre:  [
+                        {name: "All Types",    type: "any"},
+                        {name: "Eposide", type: "eposide"},
+                        {name: "Movie", type: "movie"}
+                      ],
+              sortBy: [
+                        {name: "Relevance",   type: "relevance", defaultSort: "desc"},
+                        {name: "Date Added",  type: "date", defaultSort: "desc"},
+                        {name: "Title",       type: "title", defaultSort: "asc"},
+                        {name: "Rating",      type: "rating", defaultSort: "desc"},
+                        {name: "View Count",  type: "viewCount", defaultSort: "desc"}
+                      ],
+              quality: [
+                        {name: "All Qualities",     type: "any"},
+                        {name: "Standard",type: "standard"},
+                        {name: "High",    type: "high"},
+                      ]
+            };
+        },
         find: function (options) {
             return new Promise(function (resolve, reject) {
 
                 var keyword =  options.term || "";
-                if (keyword == null || keyword.length == 0) {
-                    reject(new Error("Empty search key"));
-                    return;
-                }
+
                 var url = "https://www.googleapis.com/youtube/v3/search?q=" + encodeURIComponent(keyword) + "&part=snippet&key=AIzaSyA94gwn5hghSfnrqBuKEWnrM_UcEwnrowI"
 
                 var genre = options.genre || "";

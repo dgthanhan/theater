@@ -1,7 +1,7 @@
 (function () {
     const request = require("request");
-    var YTS = {
-        name: "yts",
+    var POPCORN = {
+        name: "popcorn",
         getSearchFilterOptions: function() {
             return {
               searchable: true,
@@ -31,19 +31,14 @@
                         {name: "War",       type: "War"},
                         {name: "Western",   type: "Western"}
                       ],
-
               sortBy: [
-                        {name: "Date Added",  type: "date_added", defaultSort: "desc"},
-                        {name: "Title",       type: "title", defaultSort: "asc"},
-                        {name: "Year",        type: "year", defaultSort: "desc"},
-                        {name: "Rating",      type: "rating", defaultSort: "desc"}
-                      ],
-              quality: [
-                        {name: "All Qualities", type: ""},
-                        {name: "HD 720p",     type: "720p"},
-                        {name: "HD 1080p",    type: "1080p"},
-                        {name: "3D",          type: "3D"}
-                    ]
+                        {name: "Last Added",  type: "last_added" ,  defaultSort: "1"},
+                        {name: "Title",       type: "title",        defaultSort: "1"},
+                        {name: "Trending",    type: "trending",     defaultSort: "1"},
+                        {name: "Year",        type: "year",         defaultSort: "1"},
+                        {name: "Rating",      type: "rating",       defaultSort: "1"}
+                    ],
+
             };
         },
         find: function (options) {
@@ -52,25 +47,22 @@
                 if (keyword == null || keyword.length == 0) {
                     keyword = "";
                 }
-                var genre = options.genre || "action";
+                var genre = options.genre || "";
                 var quality = options.quality || "";
-                var sortBy = options.sortBy || "year";
+                var sortBy = options.sortBy || "";
                 var page = options.page || 1;
-                var limit = options.limit || 10;
-                var url = "https://yts.ag/api/v2/list_movies.json?&query_term=" + encodeURIComponent(keyword);
+                var limit = options.limit || 50;
+                var url = "https://tv-v2.api-fetch.website/movies/" + page + "?keywords=" + encodeURIComponent(keyword);
+
                 if (genre.length > 0) {
-                    url = url + "&genre=" + genre;
+                    url += "&genre=" + encodeURIComponent(genre);
                 }
-                if (quality.length > 0) {
-                    url = url + "&quality=" + quality;
-                }
+                //1 or -1
+                var order = options.order || "1";
+                url += "&order=" + order;
                 if (sortBy.length > 0) {
-                    url = url +  "&sort_by=" + sortBy;
+                    url = url +  "&sort=" + sortBy;
                 }
-                var order = options.order || "desc";
-                url += "&order_by=" + order;
-                url += "&page=" + page;
-                url += "&limit=" + limit;
 
                 console.log("Requesting " + url);
                 request(url, function (error, response, body) {
@@ -83,56 +75,43 @@
                         reject(new Error("Invalid response"));
                         return;
                     }
-
                     var data = JSON.parse(body);
-                    var movies = data.data.movies;
+                    var movies = data;//data.data.movies;
 
                     var contents = [];
                     if (movies != null && movies.length > 0) {
                         for (var movie of movies) {
-                            if (!movie.torrents || movie.torrents.length == 0) continue;
-                            var torrent = null;
-                            for (var t of movie.torrents) {
-                                if (t.quality == "1080p") {
-                                    torrent = t;
-                                    break;
-                                }
-                            }
-                            if (!torrent) {
-                                for (var t of movie.torrents) {
-                                    if (t.quality == "720p") {
-                                        torrent = t;
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if (!torrent) torrent = movie.torrents[0];
-
+                            if (!movie.torrents || !movie.torrents.en) continue;
+                            var fullhd = movie.torrents.en["1080p"];
+                            var hd = movie.torrents.en["720p"];
+                            var video = fullhd ? fullhd : hd;
+                            if (!video) continue;
                             var content = {
                                 title: movie.title,
-                                imdb: movie.imdb_code,
+                                imdb: movie.imdb_code || movie.imdb_id,
                                 contentType: "video",
-                                duration: movie.runtime * 60,
-                                description: movie.summary,
-                                thumbnails: [movie.medium_cover_image],
-                                url: torrent.url,
-                                hash: torrent.hash,
+                                duration: parseInt(movie.runtime, 10) * 60,
+                                description: movie.summary || movie.synopsis,
+                                thumbnails: [movie.medium_cover_image || (movie.images && movie.images.poster ? movie.images.poster : "")],
+                                url: movie._id,
+                                hash: movie._id,
                                 year: movie.year,
-                                rating: movie.rating,
+                                rating: movie.rating.percentage / 10,
+                                watching: movie.rating.watching,
                                 extras: {
-                                    torrents: movie.torrents
+                                    torrents: [{quality: fullhd ? "1080p" : "", url : fullhd ? fullhd.url : ""},
+                                                {quality: hd ? "720p" : "", url : hd ? hd.url : ""}]
                                 }
+
                             };
                             contents.push(content);
                         }
                     }
-                    var vc = data.data.movie_count;
-                    var hasMore = vc > 0 && (data.data.page_number * data.data.limit) < vc;
-                    console.log("Has more items " + hasMore + " video counts: " + vc);
+                    var hasMore = movies.length == 50;
+                    console.log("Has more items " + hasMore);
                     if (hasMore) {
                         //Item to load more
-                        contents.push({title: "Load more...", description: "", page: data.data.page_number + 1, limit: data.data.limit});
+                        contents.push({title: "Load more...", description: "", page: page + 1, limit: limit});
                     }
                     resolve(contents);
                 });
@@ -140,5 +119,5 @@
         }
     };
 
-    module.exports = YTS;
+    module.exports = POPCORN;
 })();

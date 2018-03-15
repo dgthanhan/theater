@@ -38,9 +38,10 @@
             var quality = request.query.quality || "";
             var genre = request.query.genre || "";
             var sortBy = request.query.sortBy || "";
-            var orderBy = request.query.orderBy || "";
+            var order = request.query.order || "";
             var page = request.query.page || "";
             var limit = request.query.limit || "10";
+            var source = request.query.source || "";
             service.getContents(
               {
                 forceRefresh: refresh,
@@ -48,9 +49,10 @@
                 quality: quality,
                 genre: genre,
                 sortBy:  sortBy,
-                orderBy: orderBy,
+                order: order,
                 limit: limit,
-                page: page
+                page: page,
+                source: source
               }).then(function (contents) {
                 //console.log("Content returned for ", service.type, contents);
                 response.json(contents);
@@ -62,7 +64,7 @@
 
         server.get("/api/search/options", function (request, response) {
             var service = serviceManager.getService(request.query.service);
-            var options = service.getSearchFilterOptions();
+            var options = service ? service.getSearchFilterOptions() : {};
             response.json(options);
         });
         server.get("/api/fetch/playback", function (request, response) {

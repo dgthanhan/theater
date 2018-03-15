@@ -18,7 +18,7 @@
             margin-left: 0.5em;
         }
         .widget_ComboManager {
-            padding: 0.2em;
+            padding: 0.5em;
             border: none;
             box-shadow: none;
             background: transparent;
@@ -26,13 +26,18 @@
             text-decoration: underline;
             font-size: 0.85em;
         }
-
+        .widget_ComboManager.Dirty {
+            display: none;
+        }
         * + .widget_ComboManager {
             margin-left: 1em;
         }
     </style>
     <hbox anon-id="searchTermBox">
-        <hbox flex="1"><input anon-id="searchText" flex="1" type="text" placeholder="Keywords to search..."/></hbox>
+        <hbox flex="1">
+            <input anon-id="searchText" flex="1" type="text" placeholder="Keywords to search..."/>
+            <ui:ComboManager anon-id="sourceManager"/>
+        </hbox>
         <button type="button" anon-id="doSearchButton"><i class="mdi mdi-magnify" /> Search</button>
     </hbox>
     <hbox anon-id="searchBox">

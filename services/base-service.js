@@ -67,6 +67,17 @@ BaseService.prototype.findCachedContent = function (url) {
     };
 };
 
+BaseService.prototype.getSearchFilterOptions = function() {
+    var s = [];
+    for (var source of this.sources) {
+        var r = {};
+        r.name = source.name;
+        r.filterOptions = source.getSearchFilterOptions();
+        s.push(r);
+    }
+    return s;
+}
+
 BaseService.prototype.getCurrentStatus = function () {
     return this.converter ? this.converter.status : State.Idle;
 };
