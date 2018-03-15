@@ -32,11 +32,11 @@
                         {name: "Western",   type: "Western"}
                       ],
               sortBy: [
-                        {name: "Last Added",  type: "last_added" ,  defaultSort: "1"},
+                        {name: "Year",        type: "year",         defaultSort: "-1"},
+                        {name: "Last Added",  type: "last added" ,  defaultSort: "1"},
                         {name: "Title",       type: "title",        defaultSort: "1"},
                         {name: "Trending",    type: "trending",     defaultSort: "1"},
-                        {name: "Year",        type: "year",         defaultSort: "1"},
-                        {name: "Rating",      type: "rating",       defaultSort: "1"}
+                        {name: "Rating",      type: "rating",       defaultSort: "-1"}
                     ],
 
             };
