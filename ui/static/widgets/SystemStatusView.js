@@ -22,9 +22,13 @@ function SystemStatusView() {
     }
 
     loadStatus();
-
     this.bind("click", function () {
-        new SystemStatusDialog().open(this.status);
+
+        if (!thiz.status || !thiz.status.service) return;
+
+        thiz.statusDialog = new SystemStatusDialog();
+        thiz.statusDialog.open(this.status);
+
     }, this.backendDetailButton);
 
     var thiz = this;
@@ -48,10 +52,8 @@ SystemStatusView.prototype.setStatus = function (status) {
                 imageView.setCenterCrop(status.content.thumbnails.length == 1);
                 imageView.setUrl(url);
             }
-
             Dom.setInnerText(this.contentTitle, status.content.title);
             Dom.setInnerText(this.contentDescription, status.content.description);
-
             this.lastContentURL = status.content.url;
         }
     }
@@ -66,4 +68,5 @@ SystemStatusView.prototype.setStatus = function (status) {
         this.playbackStatusPane.style.visibility = "hidden";
         this.backendStatusMessage.innerHTML = "&#160;";
     }
+    if (this.statusDialog) this.statusDialog.setup(this.status);
 }

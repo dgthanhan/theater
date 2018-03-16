@@ -5,7 +5,7 @@
         getSearchFilterOptions: function() {
             return {
               searchable: true,
-              allowBlankKeyword: true,
+              allowBlankKeyword: false,
               genre:  [
                         {name: "All Types",    type: "any"},
                         {name: "Eposide", type: "eposide"},
@@ -27,8 +27,11 @@
         },
         find: function (options) {
             return new Promise(function (resolve, reject) {
-
                 var keyword =  options.term || "";
+                if (keyword.length == 0) {
+                    reject(new Error("Keywords is empty"));
+                    return;
+                }
 
                 var url = "https://www.googleapis.com/youtube/v3/search?q=" + encodeURIComponent(keyword) + "&part=snippet&key=AIzaSyA94gwn5hghSfnrqBuKEWnrM_UcEwnrowI"
 

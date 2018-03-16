@@ -4,6 +4,8 @@
         }
         @streamURL {
             font-size: 0.85em;
+            max-width: 25em;
+            overflow: auto;
         }
         @this > * + * {
             margin-top: 1em;
@@ -24,6 +26,19 @@
         @controlPane > button + button {
 
         }
+        .Duration {
+            text-align: right;
+        }
+        @scaleContainer {
+            height: 1.5em;
+        }
+        @seekBarPane {
+            display: none;
+        }
+        @seekBarPane .Scale {
+            width: 100%;
+            height: 1.5em;
+        }
     </style>
     <vbox class="Info">
         <span>Stream URL:</span>
@@ -33,9 +48,16 @@
         <span>Backend status:</span>
         <div anon-id="backendStatus"></div>
     </vbox>
+    <vbox anon-id="seekBarPane">
+        <hbox>
+            <span flex="1" class="Elapsed">00:06</span>
+            <span flex="1" class="Duration">1:20:30</span>
+        </hbox>
+        <hbox anon-id="scaleContainer" flex="1"></hbox>
+    </vbox>
     <hbox anon-id="controlPane">
         <button anon-id="killButton" flex="1"><i class="mdi mdi-stop" /> Stop</button>
-        <button anon-id="playButton" flex="1"><i class="mdi mdi-play" />Re Play</button>
+        <button anon-id="playButton" flex="1"><i class="mdi mdi-play" />RePlay</button>
         <button anon-id="fixButton" flex="1"><i class="mdi mdi-auto-fix" /> Fix</button>
     </hbox>
 </vbox>

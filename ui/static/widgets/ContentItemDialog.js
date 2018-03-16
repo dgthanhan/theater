@@ -30,7 +30,7 @@ ContentItemDialog.prototype.getDialogActions = function () {
 ContentItemDialog.prototype.setup = function (media) {
     this.content = media;
     console.log(media);
-    this.posterImage.src = this.content.thumbnails[0];
+    this.posterImage.setUrl(this.content.thumbnails && this.content.thumbnails.length > 0 ? this.content.thumbnails[0] : "");
     if (this.content.imdb) {
         this.imdbLink.href = "http://www.imdb.com/title/" + this.content.imdb + "/";
     } else {

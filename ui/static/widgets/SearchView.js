@@ -39,6 +39,7 @@ function SearchView() {
 __extend(BaseApplicationView, SearchView);
 
 SearchView.prototype.activeSource = function (source) {
+    console.log("Activating souce: " + source.name);
     var thiz = this;
     var options = source.filterOptions;
     var searchable = options.searchable ? true : false;
@@ -54,7 +55,7 @@ SearchView.prototype.activeSource = function (source) {
     }
     thiz.setEnabled(searchable);
 
-    if (options.allowBlankKeyword || thiz.searchText.value.trim()) {
+    if (options.allowBlankKeyword || thiz.searchText.value) {
         thiz.search();
     } else {
         AppView.instance.allContentListView.innerHTML = "";
@@ -71,14 +72,13 @@ SearchView.prototype.selectSource = function(service) {
     API.get("/api/search/options", {
       service: service.type
     }).then(function(sources) {
-
         thiz.sourceManager.setItems(sources);
-
         if (!sources || sources.length == 1) {
             Dom.addClass(thiz.sourceManager.node(), "Dirty");
         } else {
             Dom.removeClass(thiz.sourceManager.node(), "Dirty");
         }
+
         if (sources && sources.length >= 1) {
             thiz.activeSource(sources[0]);
         }
