@@ -15,9 +15,9 @@ function SystemStatusView() {
     function loadStatus() {
         API.get("/api/status").then(function (status) {
             thiz.setStatus(status);
-            setTimeout(loadStatus, 1000);
+            setTimeout(loadStatus, 800);
         }).catch(function () {
-            setTimeout(loadStatus, 1000);
+            setTimeout(loadStatus, 800);
         });
     }
 

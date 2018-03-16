@@ -106,6 +106,22 @@
                 response.status(500).send(e);
             });
         });
+        server.get("/api/pause", function (request, response) {
+            serviceManager.pause().then(function () {
+                response.json({message: "OK"})
+            }).catch (function () {
+                console.error(e);
+                response.status(500).send(e);
+            });
+        });
+        server.get("/api/resume", function (request, response) {
+            serviceManager.resume().then(function () {
+                response.json({message: "OK"})
+            }).catch (function () {
+                console.error(e);
+                response.status(500).send(e);
+            });
+        });
         server.get("/api/status", function (request, response) {
             response.json(serviceManager.getCurrentStatus());
         });

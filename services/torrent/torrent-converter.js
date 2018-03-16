@@ -51,7 +51,7 @@
                             options.content.subtitlePath = null;
                             subSearch(options.content.imdb, {
                                 path: "/tmp",
-                                langs: ["en"],
+                                langs: ["en", "vi"],
                                 format: "srt"
                             }).then(function (subtitles){
                                 if (subtitles && subtitles.length > 0) {
@@ -141,4 +141,3 @@
 
     module.exports = TorrentConverter;
 })();
-

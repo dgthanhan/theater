@@ -28,10 +28,33 @@
             });
         });
     };
+
+    KodiController.prototype.pause = function() {
+        var thiz = this;
+        return new Promise(function (resolve, reject) {
+            thiz.doOnFirstVideoPlayer(function(player){
+                thiz._get({
+                    jsonrpc: "2.0",
+                    id: "1",
+                    method: "Player.PlayPause",
+                    params: {
+                        playerid: player.playerid
+                    }
+                }).then(function (result) {
+                    console.log("pause result", result);
+                    resolve(result);
+                }).catch(reject);
+
+            }, reject);
+        });
+    }
+
+    KodiController.prototype.resume = function() {
+        return this.pause();
+    }
     KodiController.prototype.play = function (url, options) {
         this.pendingSeek = null;
-        this.currentContentId = options ? options.id : null;
-
+        this.currentContentId = options ? options.id : url;
         var thiz = this;
 
         return new Promise(function (resolve, reject) {
@@ -46,17 +69,7 @@
                 }
             }).then(function (result) {
                 console.log("playing result", result);
-
                 var cache = thiz.positionCache[thiz.currentContentId];
-                // if (!cache) {
-                //     cache = {
-                //         completed: 0.1,
-                //         time: {
-                //             hours: 0, minutes: 1, seconds: 25
-                //         }
-                //     };
-                // }
-
                 if (cache && cache.completed < 1 && cache.completed > 0 && cache.time) {
                     console.log("Setting pending seek", cache);
                     thiz.pendingSeek = cache;
@@ -163,26 +176,7 @@
                     if (response && response.result && response.result.time) {
                         if (thiz.pendingSeek) {
                             console.log("Contains pending seek, seek now", thiz.pendingSeek);
-
-                            var seconds = thiz.kodiTimeToSeconds(thiz.pendingSeek.time);
-                            seconds = Math.max(0, seconds - 3);
-                            var time = thiz.kodiTimeFromSeconds(seconds);
-                            
-                            var seekCommand = {
-                                jsonrpc: "2.0",
-                                id: "1",
-                                method: "Player.Seek",
-                                params: {
-                                    playerid: players[0].playerid,
-                                    value: time
-                                }
-                            };
-                            console.log("seeking now", seekCommand);
-
-                            thiz._get(seekCommand).then(function (result) {
-                                console.log("SEEK result: ", result);
-                            });
-
+                            thiz.seekTo(thiz.kodiTimeToSeconds(thiz.pendingSeek.time));
                             thiz.pendingSeek = null;
                         }
                         thiz.saveTrackedPosition(response.result);
@@ -199,10 +193,31 @@
             }
         })
     };
+    KodiController.prototype.seekTo = function(seconds) {
+        seconds = Math.max(0, seconds - 3);
+        var time = thiz.kodiTimeFromSeconds(seconds);
+
+        var seekCommand = {
+            jsonrpc: "2.0",
+            id: "1",
+            method: "Player.Seek",
+            params: {
+                playerid: players[0].playerid,
+                value: time
+            }
+        };
+        console.log("seeking now", seekCommand);
+
+        thiz._get(seekCommand).then(function (result) {
+            console.log("SEEK result: ", result);
+        });
+
+    }
 
     KodiController.prototype.kodiTimeToSeconds = function (time) {
         return (time.hours * 60 + time.minutes) * 60 + time.seconds;
     }
+
     KodiController.prototype.kodiTimeFromSeconds = function (seconds) {
         seconds = Math.round(seconds);
         var time = {};
@@ -216,20 +231,23 @@
         return time;
     }
     KodiController.prototype.saveTrackedPosition = function (result) {
+        var t = this.kodiTimeToSeconds(result.time);
+        var l = this.kodiTimeToSeconds(result.totaltime);
         var cache = {
             time: result.time,
             length: result.totaltime,
-            timeInSeconds: this.kodiTimeToSeconds(result.time),
-            lengthInSeconds: this.kodiTimeToSeconds(result.totaltime),
+            timeInSeconds: t,
+            lengthInSeconds: l,
+            remaining: this.kodiTimeFromSeconds(l-t)
         };
 
         cache.completed = cache.lengthInSeconds > 0 ? (cache.timeInSeconds / cache.lengthInSeconds) : 0;
 
         this.positionCache[this.currentContentId] = cache;
     }
-
-
-
+    KodiController.prototype.getCurrentPosition = function(id) {
+        return this.positionCache[id];
+    }
     module.exports = KodiController;
 })();
 

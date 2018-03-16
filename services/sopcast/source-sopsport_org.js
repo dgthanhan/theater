@@ -7,6 +7,7 @@
         getSearchFilterOptions: function() {
             return {
               searchable: false,
+              allowBlankKeyword: true,
               genre: [],
               sortBy: [],
               quality: []

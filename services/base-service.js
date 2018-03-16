@@ -18,7 +18,9 @@ BaseService.prototype.getContents = function (options) {
 BaseService.prototype.fetchPlaybackInfo = function(options) {
     return {};
 }
-
+BaseService.prototype.getPlaybackInfo = function() {
+    return {};
+}
 BaseService.prototype.start = function (content) {
     var thiz = this;
 

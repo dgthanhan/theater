@@ -120,6 +120,21 @@
             });
         });
     };
+    Manager.resume = function () {
+        return new Promise(function (resolve, reject) {
+            resolve();
+            player.resume();
+            sayStatusChanged();
+        });
+    };
+    Manager.pause = function () {
+        return new Promise(function (resolve, reject) {
+            resolve();
+            player.pause();
+            sayStatusChanged();
+        });
+    };
+
     Manager.stop = function () {
         return new Promise(function (resolve, reject) {
             resolve();
@@ -150,13 +165,15 @@
                 type: activeService.type,
                 name: activeService.name,
                 status: activeService.getCurrentStatus(),
-                backend: activeService.getBackendStatus()
+                backend: activeService.getBackendStatus(),
             };
         }
 
         status.playbackStatus = playbackOK ? "OK" : "Error";
         status.playbackMessage = playbackMessage;
-
+        if (player && currentContent) {
+            status.position = player.getCurrentPosition(currentContent.url);
+        }
         return status;
     };
     Manager.setPlayer = function (providedPlayer) {
