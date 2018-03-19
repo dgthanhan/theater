@@ -176,7 +176,7 @@
                     if (response && response.result && response.result.time) {
                         if (thiz.pendingSeek) {
                             console.log("Contains pending seek, seek now", thiz.pendingSeek);
-                            thiz.seekTo(thiz.kodiTimeToSeconds(thiz.pendingSeek.time));
+                            thiz.seekTo(thiz.kodiTimeToSeconds(thiz.pendingSeek.time) - 3);
                             thiz.pendingSeek = null;
                         }
                         thiz.saveTrackedPosition(response.result);
@@ -194,24 +194,27 @@
         })
     };
     KodiController.prototype.seekTo = function(seconds) {
-        seconds = Math.max(0, seconds - 3);
+        var thiz = this;
+        seconds = Math.max(0, seconds);
         var time = thiz.kodiTimeFromSeconds(seconds);
-
-        var seekCommand = {
-            jsonrpc: "2.0",
-            id: "1",
-            method: "Player.Seek",
-            params: {
-                playerid: players[0].playerid,
-                value: time
-            }
-        };
-        console.log("seeking now", seekCommand);
-
-        thiz._get(seekCommand).then(function (result) {
-            console.log("SEEK result: ", result);
-        });
-
+        console.log("seeking now", time);
+        return new Promise(function (resolve, reject) {
+             thiz.doOnFirstVideoPlayer(function (player){
+                 var seekCommand = {
+                     jsonrpc: "2.0",
+                     id: "1",
+                     method: "Player.Seek",
+                     params: {
+                         playerid: player.playerid,
+                         value: time
+                     }
+                 };
+                 thiz._get(seekCommand).then(function (result) {
+                     console.log("SEEK result: ", result);
+                     resolve(result);
+                 }).catch(reject);
+             }, reject);
+         });
     }
 
     KodiController.prototype.kodiTimeToSeconds = function (time) {

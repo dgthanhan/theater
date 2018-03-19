@@ -127,6 +127,13 @@
             sayStatusChanged();
         });
     };
+    Manager.seekTo = function (seconds) {
+        return new Promise(function (resolve, reject) {
+            resolve();
+            player.seekTo(seconds);
+            sayStatusChanged();
+        });
+    };
     Manager.pause = function () {
         return new Promise(function (resolve, reject) {
             resolve();

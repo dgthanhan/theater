@@ -122,6 +122,15 @@
                 response.status(500).send(e);
             });
         });
+        server.get("/api/seekTo", function (request, response) {
+            var seconds = request.query.seconds ? request.query.seconds : 0;
+            serviceManager.seekTo(seconds).then(function () {
+                response.json({message: "OK"})
+            }).catch (function () {
+                console.error(e);
+                response.status(500).send(e);
+            });
+        });
         server.get("/api/status", function (request, response) {
             response.json(serviceManager.getCurrentStatus());
         });

@@ -18,10 +18,40 @@ function SystemStatusDialog() {
     this.slider.min = 0;
     this.slider.step = 1000;
 
+    this.bind("input", function(e) {
+        var v = thiz.slider.value;
+        var moving = thiz.kodiTimeFromSeconds(v/1000);
+        thiz.seekTo.innerHTML = thiz.formatTime(moving);
+        console.log("Moving " + v +" --> " + thiz.pendingSeek);
+
+        if (!thiz.pendingSeek) {
+            thiz.pendingSeek = true;
+            API.get("/api/seekTo", {seconds: v/1000}).then(function () {
+                thiz.pendingSeek = false;
+                thiz.seekTo.innerHTML = "";
+            });
+            e.preventDefault();
+        }
+
+    }, this.slider);
+
+    this.pendingSeek = false;
 }
 
 __extend(BaseDialog, SystemStatusDialog);
 
+SystemStatusDialog.prototype.kodiTimeFromSeconds = function (seconds) {
+    seconds = Math.round(seconds);
+    var time = {};
+    time.seconds = seconds % 60;
+
+    seconds = Math.floor((seconds - time.seconds) / 60);
+    time.minutes = seconds % 60;
+
+    time.hours = Math.floor((seconds - time.minutes) / 60);
+
+    return time;
+}
 SystemStatusDialog.prototype.getDialogActions = function () {
     return [{
         type: "cancel", title: "Close",
@@ -47,7 +77,11 @@ SystemStatusDialog.prototype.setup = function (status) {
             position.time.hours * 60 * 60 * 1000;
 
         this.slider.max = d;
-        this.slider.value = c;
+
+        if (!this.pendingSeek) {
+            this.slider.value = c;
+        }
+
     } else {
         this.elapsedInfo.innerHTML = "00:00:00";
         this.durationInfo.innerHTML = "00:00:00";
