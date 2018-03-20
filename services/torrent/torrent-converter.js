@@ -49,26 +49,14 @@
                         if (options && options.content && options.content.imdb) {
                             const subSearch = require("yifysubtitles");
                             options.content.subtitlePath = null;
-                            options.content.subtitlePaths = {};
 
                             subSearch(options.content.imdb, {
                                 path: "/tmp",
-                                langs: ["en", "vi"],
+                                langs: options.lang ? [options.lang] : ["en", "vi"],
                                 format: "srt"
                             }).then(function (subtitles){
                                 if (subtitles && subtitles.length > 0) {
-                                    options.content.subtitlePaths = {};
-                                    for (var i = 0; i < subtitles.length; i++) {
-                                        var sub = subtitles[i];
-                                        options.content.subtitlePaths[sub.langShort] = sub;
-                                    }
-                                    var selectedSub = options.content.subtitlePaths[options.lang];
-                                    if (selectedSub) {
-                                        console.log("Used subtitle--> " + options.lang + "-->"  + selectedSub.langShort, selectedSub.path);
-                                        options.content.subtitlePath = selectedSub.path;
-                                    } else {
-                                        options.content.subtitlePath = subtitles[0].path;
-                                    }
+                                    options.content.subtitlePath = subtitles[0].path;
                                     fs.createReadStream(options.content.subtitlePath).pipe(fs.createWriteStream("/tmp/theater-current.srt"));
                                 }
                                 resolve(url);

@@ -26,6 +26,17 @@
         @controlPane > button + button {
 
         }
+
+        @controlPane button {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        @controlPane button > i {
+            font-size: 1.4em;
+            margin-right: 0.3em;
+        }
         .Duration {
             text-align: right;
         }
@@ -54,6 +65,6 @@
     <hbox anon-id="controlPane">
         <button anon-id="killButton" flex="1"><i class="mdi mdi-stop" /> Stop</button>
         <button anon-id="pauseButton" flex="1"><i class="mdi mdi-pause" />Pause/Resume</button>
-        <button anon-id="replayButton" flex="1"><i class="mdi mdi-replay" />RePlay</button>
+        <button anon-id="replayButton" flex="1"><i class="mdi mdi-replay" />Replay</button>
     </hbox>
 </vbox>
