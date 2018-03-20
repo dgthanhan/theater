@@ -135,8 +135,14 @@
         server.get("/api/status", function (request, response) {
             response.json(serviceManager.getCurrentStatus());
         });
-
-
+        server.get("/api/reboot", function (request, response) {
+            serviceManager.reboot().then(function () {
+                response.json({message: "OK"})
+            }).catch (function () {
+                console.error(e);
+                response.status(500).send(e);
+            });
+        });
         //Web-socket interface:
 
         server.ws("/status", function(ws, request) {

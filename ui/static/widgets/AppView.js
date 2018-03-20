@@ -24,6 +24,17 @@ function AppView() {
     });
 
     this.bind("click", this.onTabClicked, this.sourceTab);
+    this.count = 0;
+
+    this.bind("click", function () {
+        thiz.count++;
+        if (thiz.count >= 5) {
+            thiz.count = 0;
+            Dialog.confirm("Reboot system?", "Reboot system to pull the newest Theater.", "Reboot", function() {
+                API.get("/api/reboot").then(function () {});
+            }, "Cancel" , function() {});
+        }
+    }, this.appIcon);
 }
 
 __extend(BaseApplicationView, AppView);

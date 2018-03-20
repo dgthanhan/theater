@@ -71,7 +71,7 @@
                     playbackMessage = "Sending media to player...";
                     sayStatusChanged();
                     var subPath = resolvedContent.subtitlePath;
-                    
+
                     player.play(resolvedContent.url, {live: resolvedContent.live, subtitlePath: subPath, id: options.url, content: resolvedContent}).then(function () {
                         playbackMessage = "Media sent to player";
                         sayStatusChanged();
@@ -121,6 +121,13 @@
         return new Promise(function (resolve, reject) {
             resolve();
             player.resume();
+            sayStatusChanged();
+        });
+    };
+    Manager.reboot = function () {
+        return new Promise(function (resolve, reject) {
+            resolve();
+            player.reboot();
             sayStatusChanged();
         });
     };
