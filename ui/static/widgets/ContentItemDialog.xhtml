@@ -28,7 +28,7 @@
         @mediaDescription {
             margin-top: 0.5em;
             font-size: 0.9em;
-            max-height: 7.4em;
+            max-height: 5em;
             text-overflow: ellipsis;
             line-height: 1.1;
             overflow: hidden;
@@ -60,15 +60,31 @@
             margin-top: 0.5em;
             align-items: center;
         }
+        @langPane {
+            margin-left: 0.5em;
+        }
+        @langPane span {
+            font-size: 0.85em;
+        }
+        @langPane @langCombo {
+            margin-top: 0.2em;
+            width: 7em;
+        }
         .NoResult {
             display: none;
         }
-        @playButton {
+        @footerPane {
             align-self: flex-end;
+        }
+        @playButton {
             margin-left: 0.5em;
         }
         @playButton.NoPlayableLinks {
             margin-left: 0em;
+        }
+        @playbackOptionsPane {
+            align-items: center;
+            margin-top: 0.5em;
         }
     </style>
     <hbox>
@@ -96,12 +112,18 @@
                         <span anon-id="watching"></span>
                     </hbox>
                 </hbox>
+                <hbox anon-id="playbackOptionsPane">
+                    <vbox anon-id="formatPane" flex="1">
+                        <span class="SecondaryText">Available formats</span>
+                        <ui:ComboManager anon-id="linkCombo"/>
+                    </vbox>
+                    <vbox anon-id="langPane" flex="1">
+                        <span class="SecondaryText">SubTitle Language</span>
+                        <ui:ComboManager anon-id="langCombo"/>
+                    </vbox>
+                </hbox>
             </vbox>
             <hbox anon-id="footerPane">
-                <vbox flex="1" anon-id="formatPane">
-                    <span class="SecondaryText">Available formats:</span>
-                    <ui:ComboManager anon-id="linkCombo"/>
-                </vbox>
                 <button anon-id="playButton" role="primary"><i class="mdi mdi-play" /> Play</button>
             </hbox>
         </vbox>

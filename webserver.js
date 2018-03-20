@@ -83,7 +83,8 @@
 
         server.get("/api/play", function (request, response) {
             var selectedUrl = request.query.selectedUrl ? request.query.selectedUrl : null;
-            serviceManager.play(request.query.service, request.query.url, selectedUrl).then(function () {
+            var options = {type: request.query.service, url: request.query.url, selectedUrl: selectedUrl, lang: request.query.lang || "EN"};
+            serviceManager.play(options).then(function () {
                 response.json({message: "OK"})
             }).catch (function () {
                 console.error(e);

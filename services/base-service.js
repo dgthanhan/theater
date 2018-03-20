@@ -21,7 +21,9 @@ BaseService.prototype.fetchPlaybackInfo = function(options) {
 BaseService.prototype.getPlaybackInfo = function() {
     return {};
 }
-BaseService.prototype.start = function (content) {
+BaseService.prototype.start = function (data) {
+    var content = data.content;
+
     var thiz = this;
 
     return new Promise(function (resolve, reject) {
@@ -33,7 +35,7 @@ BaseService.prototype.start = function (content) {
         thiz.converter = thiz.createConverter();
         var url = content.selectedUrl && content.selectedUrl.length > 0 ? content.selectedUrl : content.url;
 
-        thiz.converter.convert(url, {content: content}).then(function (url) {
+        thiz.converter.convert(url, {content: content, lang: data.lang}).then(function (url) {
             resolve({
                 url: url,
                 subtitlePath: content.subtitlePath,

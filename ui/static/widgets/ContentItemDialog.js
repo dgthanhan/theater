@@ -4,7 +4,13 @@ function ContentItemDialog() {
     var thiz = this;
     this.bind("click", function () {
         var link = thiz.linkCombo.getSelectedItem();
-        API.get("/api/play", {service: thiz.content.type, url: thiz.content.url, selectedUrl: link ? link.url : null}).then(function () {
+        var lang = thiz.langCombo.getSelectedItem();
+        API.get("/api/play", {
+            service: thiz.content.type,
+            url: thiz.content.url,
+            selectedUrl: link ? link.url : null,
+            lang: lang.key
+        }).then(function () {
             thiz.close();
         });
     }, this.playButton);
@@ -16,16 +22,25 @@ function ContentItemDialog() {
     this.linkCombo.renderer = function(item, selected) {
         return item.quality;
     }
+    this.langCombo.renderer = function(item, selected) {
+        return item.name;
+    }
+    this.langCombo.setItems([{name: "Tiếng Việt", key: "vi"}, {name: "English", key: "en"}])
 }
 
 __extend(BaseDialog, ContentItemDialog);
 
 ContentItemDialog.prototype.getDialogActions = function () {
-    return [{
-        type: "cancel", title: "Close",
-        isCloseHandler: true,
-        run: function () { return true; }
-    }];
+    return [
+        {
+            type: "cancel", title: "Close",
+            isCloseHandler: true,
+            run: function () { return true; }
+        },
+        {   type: "accept",
+            title: "Play",
+            run: function () { return false; }
+        }];
 };
 ContentItemDialog.prototype.setup = function (media) {
     this.content = media;

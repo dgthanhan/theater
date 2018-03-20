@@ -29,22 +29,21 @@
     Manager.getServices = function () {
         return services;
     };
-    Manager.play = function (type, url, selectedUrl) {
-        if (selectedUrl) {
-            console.log("Force play url: " + selectedUrl);
-        }
+    Manager.play = function (config) {
+        var options = config || {};
+        console.log("play options: ", options);
         return new Promise(function (resolve, reject) {
             playbackMessage = "Stopping player...";
             sayStatusChanged();
 
             player.stop().then(function() {
                 for (var s of services) {
-                    if (s.type != type) s.terminate();
+                    if (s.type != options.type) s.terminate();
                 }
-                var service = Manager.getService(type);
-                console.log("Playing: ", url, service.type);
+                var service = Manager.getService(options.type);
+                console.log("Playing: ", options.url, service.type);
 
-                var content = service.findCachedContent(url);
+                var content = service.findCachedContent(options.url);
                 currentContent = content;
                 activeService = service;
 
@@ -63,19 +62,17 @@
                 playbackMessage = "Resolving media..";
                 sayStatusChanged();
 
-                if (selectedUrl) {
-                    content.selectedUrl = selectedUrl;
+                if (options.selectedUrl) {
+                    content.selectedUrl = options.selectedUrl;
                 }
-                service.start(content).then(function (resolvedContent) {
-
-                    console.log("resolvedContent Before:", resolvedContent);
-
+                service.start({content: content, lang: options.lang}).then(function (resolvedContent) {
                     resolvedURL = resolvedContent.url;
                     playbackOK = true;
                     playbackMessage = "Sending media to player...";
                     sayStatusChanged();
-                    console.log("resolvedContent", content);
-                    player.play(resolvedContent.url, {live: resolvedContent.live, subtitlePath: resolvedContent.subtitlePath, id: url, content: resolvedContent}).then(function () {
+                    var subPath = resolvedContent.subtitlePath;
+                    
+                    player.play(resolvedContent.url, {live: resolvedContent.live, subtitlePath: subPath, id: options.url, content: resolvedContent}).then(function () {
                         playbackMessage = "Media sent to player";
                         sayStatusChanged();
                     }).catch(function (e) {
