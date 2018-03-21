@@ -133,9 +133,12 @@
     };
     Manager.seekTo = function (seconds) {
         return new Promise(function (resolve, reject) {
-            resolve();
-            player.seekTo(seconds);
-            sayStatusChanged();
+            playbackMessage = "Seeking...";
+            player.seekTo(seconds).then(function(result) {
+                playbackMessage = "Done...";
+                resolve();
+                sayStatusChanged();
+            }).catch(reject);
         });
     };
     Manager.pause = function () {

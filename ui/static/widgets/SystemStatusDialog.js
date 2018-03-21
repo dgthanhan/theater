@@ -22,16 +22,22 @@ function SystemStatusDialog() {
         var v = thiz.slider.value;
         var moving = thiz.kodiTimeFromSeconds(v/1000);
         thiz.seekTo.innerHTML = thiz.formatTime(moving);
-        console.log("Moving " + v +" --> " + thiz.pendingSeek);
-
-        if (!thiz.pendingSeek) {
-            thiz.pendingSeek = true;
-            API.get("/api/seekTo", {seconds: v/1000}).then(function () {
-                thiz.pendingSeek = false;
-                thiz.seekTo.innerHTML = "";
-            });
-            e.preventDefault();
+        if (thiz.seekFunction) {
+            clearTimeout(thiz.seekFunction);
         }
+        thiz.pendingSeek = true;
+        thiz.seekFunction = setTimeout(function() {
+            console.log("SeekTo --> " + (v/1000) + "s");
+            API.get("/api/seekTo", {seconds: v/1000}).then(function (o) {
+                console.log(o);
+                thiz.seekFunction = null;
+                thiz.seekTo.innerHTML = "";
+                setTimeout(function(){
+                    thiz.pendingSeek = false;
+                }, 10000);
+            });
+        }, 1000);
+        thiz.seekFunction.time = moving;
 
     }, this.slider);
 
@@ -77,11 +83,9 @@ SystemStatusDialog.prototype.setup = function (status) {
             position.time.hours * 60 * 60 * 1000;
 
         this.slider.max = d;
-
         if (!this.pendingSeek) {
             this.slider.value = c;
         }
-
     } else {
         this.elapsedInfo.innerHTML = "00:00:00";
         this.durationInfo.innerHTML = "00:00:00";
