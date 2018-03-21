@@ -49,15 +49,25 @@
                         if (options && options.content && options.content.imdb) {
                             const subSearch = require("yifysubtitles");
                             options.content.subtitlePath = null;
-
                             subSearch(options.content.imdb, {
                                 path: "/tmp",
-                                langs: options.lang ? [options.lang] : ["en", "vi"],
+                                langs: ["en", "vi"],
                                 format: "srt"
-                            }).then(function (subtitles){
+                            }).then(function (subtitles) {
                                 if (subtitles && subtitles.length > 0) {
-                                    options.content.subtitlePath = subtitles[0].path;
+                                    var sub = subtitles[0];
+                                    for (var s of subtitles) {
+                                        console.log(s);
+                                        if (options.lang && s.langShort && s.langShort == options.lang) {
+                                            sub = s;
+                                            break;
+                                        }
+                                    }
+                                    console.log("Used sub -->", s);
+                                    options.content.subtitlePath = sub.path;
                                     fs.createReadStream(options.content.subtitlePath).pipe(fs.createWriteStream("/tmp/theater-current.srt"));
+                                } else {
+                                    console.log("No subtitle found.");
                                 }
                                 resolve(url);
                             }).catch(function (e) {
