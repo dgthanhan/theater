@@ -8,7 +8,21 @@
         this.setupCEC();
         this.omx = null;
     }
+    OMXController.prototype.getCurrentPosition = function(url) {
+        return {};
+    }
+    OMXController.prototype.pause = function() {
 
+    }
+    OMXController.prototype.resume = function() {
+
+    }
+    OMXController.prototype.reboot  = function() {
+
+    }
+    OMXController.prototype.seekTo = function(seconds) {
+
+    }
     OMXController.prototype.play = function (url, options) {
         var thiz = this;
         this.args = {

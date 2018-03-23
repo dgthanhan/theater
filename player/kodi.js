@@ -1,6 +1,5 @@
 (function () {
     const request = require("request");
-
     function KodiController(port, options) {
         this.port = port;
         this.positionCache = {};

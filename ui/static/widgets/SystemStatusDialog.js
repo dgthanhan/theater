@@ -76,11 +76,11 @@ SystemStatusDialog.prototype.setup = function (status) {
         } else {
             this.durationInfo.innerHTML = this.formatTime(position.length);
         }
-        var d = position.length.milliseconds + position.length.seconds * 1000 + position.length.minutes * 60 * 1000 +
-            position.length.hours * 60 * 60 * 1000;
+        var d = position.length ? (position.length.milliseconds + position.length.seconds * 1000 + position.length.minutes * 60 * 1000 +
+            position.length.hours * 60 * 60 * 1000) : 0;
 
-        var c = position.time.milliseconds + position.time.seconds * 1000 + position.time.minutes * 60 * 1000 +
-            position.time.hours * 60 * 60 * 1000;
+        var c = position.time ? (position.time.milliseconds + position.time.seconds * 1000 + position.time.minutes * 60 * 1000 +
+            position.time.hours * 60 * 60 * 1000) : 0;
 
         this.slider.max = d;
         if (!this.pendingSeek) {
@@ -106,6 +106,7 @@ SystemStatusDialog.prototype.appendZeroIfNeeded = function (v) {
     return v;
 }
 SystemStatusDialog.prototype.formatTime = function (time) {
+    if (!time) return "00:00:00";
     return time.hours > 0 ? (this.appendZeroIfNeeded(time.hours) + ":" +
         this.appendZeroIfNeeded(time.minutes) + ":" + this.appendZeroIfNeeded(time.seconds))
         : (this.appendZeroIfNeeded(time.minutes) + ":" + this.appendZeroIfNeeded(time.seconds));
