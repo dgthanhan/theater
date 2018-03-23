@@ -4,7 +4,7 @@
     const discovery = require("./discovery.js");
     function main() {
         discovery.start();
-        var player = playerManager.activePlayer("CAST");
+        var player = playerManager.activePlayer("KODI");
         webServer.start();
         setTimeout(function () {
             player.showNotification("Theater", "Theater application: " + webServer.lanIP);
