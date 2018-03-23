@@ -12,8 +12,6 @@
     }
 
     ChromecastController.prototype.saveStatus = function (status) {
-        console.log('status broadcast playerState', JSON.stringify(status));
-
         try {
             this.status = status.playerState || "";
             var t = Math.round(status.currentTime);
@@ -183,6 +181,7 @@
         if (!this.player) return Promise.resolve();
 
         return new Promise(function (resolve, reject) {
+            console.log("seeking to: " + seconds);
             thiz.player.seek(seconds, resolve);
         });
     };

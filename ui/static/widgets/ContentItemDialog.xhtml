@@ -66,12 +66,6 @@
         @playerPane {
             margin-left: 0.5em;
         }
-        @playerPane span {
-            font-size: 0.85em;
-        }
-        @playerPane @playerManager {
-            margin-top: 0.2em;
-        }
         @langPane {
             margin-left: 0.5em;
         }
@@ -85,9 +79,6 @@
 
         .NoResult {
             display: none;
-        }
-        @footerPane {
-            align-self: flex-end;
         }
         @playButton {
             margin-left: 0.5em;
@@ -134,13 +125,10 @@
                         <span class="SecondaryText">Subtitle:</span>
                         <ui:ComboManager anon-id="langCombo"/>
                     </vbox>
-                    <vbox anon-id="playerPane" flex="1">
-                        <span class="SecondaryText">Player:</span>
-                        <ui:ComboManager anon-id="playerManager"/>
-                    </vbox>
                 </hbox>
             </vbox>
             <hbox anon-id="footerPane">
+                <ui:ComboManager anon-id="playerManager" flex="1"/>
                 <button anon-id="playButton" role="primary"><i class="mdi mdi-play" /> Play</button>
             </hbox>
         </vbox>

@@ -30,7 +30,7 @@ function ContentItemDialog() {
     this.langCombo.setItems([{name: "Tiếng Việt", key: "vi"}, {name: "English", key: "en"}])
 
     this.playerManager.renderer = function(item, selected) {
-        return item.name;
+        return "Player: " + item.name;
     };
 
     this.playerManager.comparer = function(a, b) {
