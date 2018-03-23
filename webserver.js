@@ -2,6 +2,7 @@
     const express = require("express");
     const path = require("path");
     const serviceManager = require("./services/service-manager.js");
+    const playerManager = require("./player/player-manager.js");
     const common = require("./services/common.js");
     const addWSSupport = require("express-ws");
     const fs = require("fs");
@@ -101,7 +102,13 @@
 
         server.get("/api/play", function (request, response) {
             var selectedUrl = request.query.selectedUrl ? request.query.selectedUrl : null;
-            var options = {type: request.query.service, url: request.query.url, selectedUrl: selectedUrl, lang: request.query.lang || "EN"};
+            var options = {
+                            type: request.query.service,
+                            url: request.query.url,
+                            selectedUrl: selectedUrl,
+                            lang: request.query.lang || "EN",
+                            player: request.query.player
+                        };
             serviceManager.play(options).then(function () {
                 response.json({message: "OK"})
             }).catch (function () {
@@ -153,8 +160,28 @@
         server.get("/api/status", function (request, response) {
             response.json(serviceManager.getCurrentStatus());
         });
+        server.get("/api/players", function (request, response) {
+            response.json({activePlayer: playerManager.getActivePlayerId(), players: playerManager.getAllPlayers()});
+        });
 
+        server.get("/api/active/player", function (request, response) {
+            var name = request.query.name;
+            playerManager.activePlayer(name).then(function () {
+                response.json({message: "OK"})
+            }).catch (function () {
+                console.error(e);
+                response.status(500).send(e);
+            });
+        });
 
+        server.get("/api/reboot", function (request, response) {
+            serviceManager.reboot().then(function () {
+                response.json({message: "OK"})
+            }).catch (function () {
+                console.error(e);
+                response.status(500).send(e);
+            });
+        });
         //Web-socket interface:
 
         server.ws("/status", function(ws, request) {

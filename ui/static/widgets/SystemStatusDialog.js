@@ -22,16 +22,22 @@ function SystemStatusDialog() {
         var v = thiz.slider.value;
         var moving = thiz.kodiTimeFromSeconds(v/1000);
         thiz.seekTo.innerHTML = thiz.formatTime(moving);
-        console.log("Moving " + v +" --> " + thiz.pendingSeek);
-
-        if (!thiz.pendingSeek) {
-            thiz.pendingSeek = true;
-            API.get("/api/seekTo", {seconds: v/1000}).then(function () {
-                thiz.pendingSeek = false;
-                thiz.seekTo.innerHTML = "";
-            });
-            e.preventDefault();
+        if (thiz.seekFunction) {
+            clearTimeout(thiz.seekFunction);
         }
+        thiz.pendingSeek = true;
+        thiz.seekFunction = setTimeout(function() {
+            console.log("SeekTo --> " + (v/1000) + "s");
+            API.get("/api/seekTo", {seconds: v/1000}).then(function (o) {
+                console.log(o);
+                thiz.seekFunction = null;
+                thiz.seekTo.innerHTML = "";
+                setTimeout(function(){
+                    thiz.pendingSeek = false;
+                }, 10000);
+            });
+        }, 1000);
+        thiz.seekFunction.time = moving;
 
     }, this.slider);
 
@@ -70,18 +76,16 @@ SystemStatusDialog.prototype.setup = function (status) {
         } else {
             this.durationInfo.innerHTML = this.formatTime(position.length);
         }
-        var d = position.length.milliseconds + position.length.seconds * 1000 + position.length.minutes * 60 * 1000 +
-            position.length.hours * 60 * 60 * 1000;
+        var d = position.length ? (position.length.milliseconds + position.length.seconds * 1000 + position.length.minutes * 60 * 1000 +
+            position.length.hours * 60 * 60 * 1000) : 0;
 
-        var c = position.time.milliseconds + position.time.seconds * 1000 + position.time.minutes * 60 * 1000 +
-            position.time.hours * 60 * 60 * 1000;
+        var c = position.time ? (position.time.milliseconds + position.time.seconds * 1000 + position.time.minutes * 60 * 1000 +
+            position.time.hours * 60 * 60 * 1000) : 0;
 
         this.slider.max = d;
-
         if (!this.pendingSeek) {
             this.slider.value = c;
         }
-
     } else {
         this.elapsedInfo.innerHTML = "00:00:00";
         this.durationInfo.innerHTML = "00:00:00";
@@ -102,6 +106,7 @@ SystemStatusDialog.prototype.appendZeroIfNeeded = function (v) {
     return v;
 }
 SystemStatusDialog.prototype.formatTime = function (time) {
+    if (!time) return "00:00:00";
     return time.hours > 0 ? (this.appendZeroIfNeeded(time.hours) + ":" +
         this.appendZeroIfNeeded(time.minutes) + ":" + this.appendZeroIfNeeded(time.seconds))
         : (this.appendZeroIfNeeded(time.minutes) + ":" + this.appendZeroIfNeeded(time.seconds));

@@ -31,7 +31,21 @@
         });
     };
 
+    VLCController.prototype.getCurrentPosition = function(url) {
+        return {};
+    }
+    VLCController.prototype.pause = function() {
 
+    }
+    VLCController.prototype.resume = function() {
+
+    }
+    VLCController.prototype.reboot  = function() {
+
+    }
+    VLCController.prototype.seekTo = function(seconds) {
+
+    }
     module.exports = VLCController;
 })();
 

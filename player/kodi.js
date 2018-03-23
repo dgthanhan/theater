@@ -50,6 +50,17 @@
         });
     }
 
+    KodiController.prototype.reboot = function() {
+        var thiz = this;
+        thiz._get({
+            jsonrpc: "2.0",
+            id: "1",
+            method: "System.Reboot"
+        }).then(function (result) {
+            resolve(result);
+        }).catch(reject);
+    }
+
     KodiController.prototype.resume = function() {
         return this.pause();
     }

@@ -16,6 +16,9 @@
         .SecondaryText {
             color: #c3c3c3;
         }
+        body .AnonId_dialogFooter {
+            display: none;
+        }
         @controlPane {
             margin-left: 0.5em;
             justify-content: center;
@@ -60,6 +63,15 @@
             margin-top: 0.5em;
             align-items: center;
         }
+        @playerPane {
+            margin-left: 0.5em;
+        }
+        @playerPane span {
+            font-size: 0.85em;
+        }
+        @playerPane @playerManager {
+            margin-top: 0.2em;
+        }
         @langPane {
             margin-left: 0.5em;
         }
@@ -68,8 +80,9 @@
         }
         @langPane @langCombo {
             margin-top: 0.2em;
-            width: 7em;
+            width: 6.5em;
         }
+
         .NoResult {
             display: none;
         }
@@ -120,6 +133,10 @@
                     <vbox anon-id="langPane" flex="1">
                         <span class="SecondaryText">Subtitle:</span>
                         <ui:ComboManager anon-id="langCombo"/>
+                    </vbox>
+                    <vbox anon-id="playerPane" flex="1">
+                        <span class="SecondaryText">Player:</span>
+                        <ui:ComboManager anon-id="playerManager"/>
                     </vbox>
                 </hbox>
             </vbox>

@@ -5,11 +5,13 @@ function ContentItemDialog() {
     this.bind("click", function () {
         var link = thiz.linkCombo.getSelectedItem();
         var lang = thiz.langCombo.getSelectedItem();
+        var player = thiz.playerManager.getSelectedItem();
         API.get("/api/play", {
             service: thiz.content.type,
             url: thiz.content.url,
             selectedUrl: link ? link.url : null,
-            lang: lang.key
+            lang: lang.key,
+            player: player ? player.name : ""
         }).then(function () {
             thiz.close();
         });
@@ -26,6 +28,20 @@ function ContentItemDialog() {
         return item.name;
     }
     this.langCombo.setItems([{name: "Tiếng Việt", key: "vi"}, {name: "English", key: "en"}])
+
+    this.playerManager.renderer = function(item, selected) {
+        return item.name;
+    };
+
+    this.playerManager.comparer = function(a, b) {
+        return a.name == b.name;
+    };
+    API.get("/api/players").then(function (data) {
+        thiz.playerManager.setItems(data.players);
+        thiz.playerManager.selectItemIfContains({name: data.activePlayer});
+    }).catch(function (e) {
+        console.log(e);
+    });
 }
 
 __extend(BaseDialog, ContentItemDialog);

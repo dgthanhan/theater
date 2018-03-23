@@ -1,5 +1,6 @@
 (function () {
     const EventEmitter = require("events");
+    const playerManager = require("../player/player-manager.js");
 
     var services = [];
     var serviceMap = {};
@@ -9,7 +10,6 @@
     var resolvedURL = null;
     var playbackMessage = null;
     var playbackOK = true;
-    var player = null;
 
     var Manager = {
         registerService: function (service) {
@@ -29,12 +29,22 @@
     Manager.getServices = function () {
         return services;
     };
+
     Manager.play = function (config) {
         var options = config || {};
         console.log("play options: ", options);
         return new Promise(function (resolve, reject) {
             playbackMessage = "Stopping player...";
             sayStatusChanged();
+            var player = playerManager.getPlayer();
+
+            if (options.player != player.key) {
+                console.log("Play on other player requested... " + options.player);
+                if (playerManager) {
+                    player = playerManager.activePlayer(options.player);
+                    console.log("Switch to player " + player.key);
+                }
+            }
 
             player.stop().then(function() {
                 for (var s of services) {
@@ -71,7 +81,7 @@
                     playbackMessage = "Sending media to player...";
                     sayStatusChanged();
                     var subPath = resolvedContent.subtitlePath;
-                    
+
                     player.play(resolvedContent.url, {live: resolvedContent.live, subtitlePath: subPath, id: options.url, content: resolvedContent}).then(function () {
                         playbackMessage = "Media sent to player";
                         sayStatusChanged();
@@ -97,6 +107,7 @@
     };
 
     Manager.resendPlayback = function () {
+        var player = playerManager.getPlayer();
         return new Promise(function (resolve, reject) {
             if (!resolvedURL) {
                 reject(new Error("No URL"));
@@ -118,20 +129,34 @@
         });
     };
     Manager.resume = function () {
+        var player = playerManager.getPlayer();
         return new Promise(function (resolve, reject) {
             resolve();
             player.resume();
             sayStatusChanged();
         });
     };
-    Manager.seekTo = function (seconds) {
+    Manager.reboot = function () {
+        var player = playerManager.getPlayer();
         return new Promise(function (resolve, reject) {
             resolve();
-            player.seekTo(seconds);
+            player.reboot();
             sayStatusChanged();
         });
     };
+    Manager.seekTo = function (seconds) {
+        var player = playerManager.getPlayer();
+        return new Promise(function (resolve, reject) {
+            playbackMessage = "Seeking...";
+            player.seekTo(seconds).then(function(result) {
+                playbackMessage = "Done...";
+                resolve();
+                sayStatusChanged();
+            }).catch(reject);
+        });
+    };
     Manager.pause = function () {
+        var player = playerManager.getPlayer();
         return new Promise(function (resolve, reject) {
             resolve();
             player.pause();
@@ -140,6 +165,7 @@
     };
 
     Manager.stop = function () {
+        var player = playerManager.getPlayer();
         return new Promise(function (resolve, reject) {
             resolve();
             player.stop();
@@ -175,17 +201,15 @@
 
         status.playbackStatus = playbackOK ? "OK" : "Error";
         status.playbackMessage = playbackMessage;
+        var player = playerManager.getPlayer();
         if (player && currentContent) {
             status.position = player.getCurrentPosition(currentContent.url);
         }
         return status;
     };
-    Manager.setPlayer = function (providedPlayer) {
-        player = providedPlayer;
-    };
+
     Manager.notifyStatusChange = function () {
         sayStatusChanged();
     };
-
     module.exports = Manager;
 })();

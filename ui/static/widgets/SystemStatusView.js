@@ -15,20 +15,17 @@ function SystemStatusView() {
     function loadStatus() {
         API.get("/api/status").then(function (status) {
             thiz.setStatus(status);
-            setTimeout(loadStatus, 800);
+            setTimeout(loadStatus, 1000);
         }).catch(function () {
-            setTimeout(loadStatus, 800);
+            setTimeout(loadStatus, 1000);
         });
     }
 
     loadStatus();
+
     this.bind("click", function () {
-
-        if (!thiz.status || !thiz.status.service) return;
-
         thiz.statusDialog = new SystemStatusDialog();
-        thiz.statusDialog.open(this.status);
-
+        thiz.statusDialog.open(this.status || {});
     }, this.backendDetailButton);
 
     var thiz = this;
