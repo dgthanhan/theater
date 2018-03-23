@@ -18,6 +18,23 @@
             }
 
             return null;
+        },
+
+        kodiTimeToSeconds: function (time) {
+            return (time.hours * 60 + time.minutes) * 60 + time.seconds;
+        },
+
+        kodiTimeFromSeconds: function (seconds) {
+            seconds = Math.round(seconds);
+            var time = {};
+            time.seconds = seconds % 60;
+
+            seconds = Math.floor((seconds - time.seconds) / 60);
+            time.minutes = seconds % 60;
+
+            time.hours = Math.floor((seconds - time.minutes) / 60);
+
+            return time;
         }
     };
 

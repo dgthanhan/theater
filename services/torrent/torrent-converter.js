@@ -53,11 +53,11 @@
                             subSearch(options.content.imdb, {
                                 path: "/tmp",
                                 langs: options.lang ? [options.lang] : ["en", "vi"],
-                                format: "srt"
+                                format: "vtt"
                             }).then(function (subtitles){
                                 if (subtitles && subtitles.length > 0) {
                                     options.content.subtitlePath = subtitles[0].path;
-                                    fs.createReadStream(options.content.subtitlePath).pipe(fs.createWriteStream("/tmp/theater-current.srt"));
+                                    fs.createReadStream(options.content.subtitlePath).pipe(fs.createWriteStream("/tmp/theater-current.vtt"));
                                 }
                                 resolve(url);
                             }).catch(function (e) {

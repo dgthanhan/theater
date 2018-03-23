@@ -1,5 +1,6 @@
 (function () {
     const request = require("request");
+    const Common = require("../services/common.js");
 
     function KodiController(port, options) {
         this.port = port;
@@ -176,7 +177,7 @@
                     if (response && response.result && response.result.time) {
                         if (thiz.pendingSeek) {
                             console.log("Contains pending seek, seek now", thiz.pendingSeek);
-                            thiz.seekTo(thiz.kodiTimeToSeconds(thiz.pendingSeek.time) - 3);
+                            thiz.seekTo(Common.kodiTimeToSeconds(thiz.pendingSeek.time) - 3);
                             thiz.pendingSeek = null;
                         }
                         thiz.saveTrackedPosition(response.result);
@@ -196,7 +197,7 @@
     KodiController.prototype.seekTo = function(seconds) {
         var thiz = this;
         seconds = Math.max(0, seconds);
-        var time = thiz.kodiTimeFromSeconds(seconds);
+        var time = Common.kodiTimeFromSeconds(seconds);
         console.log("seeking now", time);
         return new Promise(function (resolve, reject) {
              thiz.doOnFirstVideoPlayer(function (player){
@@ -217,31 +218,15 @@
          });
     }
 
-    KodiController.prototype.kodiTimeToSeconds = function (time) {
-        return (time.hours * 60 + time.minutes) * 60 + time.seconds;
-    }
-
-    KodiController.prototype.kodiTimeFromSeconds = function (seconds) {
-        seconds = Math.round(seconds);
-        var time = {};
-        time.seconds = seconds % 60;
-
-        seconds = Math.floor((seconds - time.seconds) / 60);
-        time.minutes = seconds % 60;
-
-        time.hours = Math.floor((seconds - time.minutes) / 60);
-
-        return time;
-    }
     KodiController.prototype.saveTrackedPosition = function (result) {
-        var t = this.kodiTimeToSeconds(result.time);
-        var l = this.kodiTimeToSeconds(result.totaltime);
+        var t = Common.kodiTimeToSeconds(result.time);
+        var l = Common.kodiTimeToSeconds(result.totaltime);
         var cache = {
             time: result.time,
             length: result.totaltime,
             timeInSeconds: t,
             lengthInSeconds: l,
-            remaining: this.kodiTimeFromSeconds(l-t)
+            remaining: Common.kodiTimeFromSeconds(l-t)
         };
 
         cache.completed = cache.lengthInSeconds > 0 ? (cache.timeInSeconds / cache.lengthInSeconds) : 0;

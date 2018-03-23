@@ -4,6 +4,7 @@
     const serviceManager = require("./services/service-manager.js");
     const common = require("./services/common.js");
     const addWSSupport = require("express-ws");
+    const fs = require("fs");
 
     var server = null;
     var wsServer = null;
@@ -18,6 +19,13 @@
         server = express();
         wsServer = addWSSupport(server);
 
+        server.use(function(req, res, next) {
+            if (req.method == "OPTIONS" && req.headers.origin) {
+                res.headers['Access-Control-Allow-Origin'] = req.headers.origin;
+            }
+            next();
+        });
+
         server.use("/static", express.static(path.join(__dirname, "ui/static")));
 
         server.get("/api/services", function (request, response) {
@@ -31,6 +39,16 @@
             }
             response.json(items);
         });
+
+        server.get("/theater-current.vtt", function (request, response) {
+            console.log("Got request to subtitle.");
+            response.setHeader('Access-Control-Allow-Origin', '*');
+            response.setHeader('Content-type', 'text/vtt');
+            response.charset = 'UTF-8';
+            response.write(fs.readFileSync("/tmp/theater-current.vtt", "utf8"));
+            response.end();
+        });
+
 
         server.get("/api/contents", function (request, response) {
             var service = serviceManager.getService(request.query.service);

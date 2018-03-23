@@ -1,6 +1,7 @@
 (function () {
     const webServer = require("./webserver.js");
     const KodiController = require("./player/kodi.js");
+    const ChromecastController = require("./player/chromecast.js");
     const VLCController = require("./player/vlc.js");
     const OMXController = require("./player/omxplayer.js");
     const serviceManager = require("./services/service-manager.js");
@@ -10,13 +11,14 @@
     function main() {
         discovery.start();
 
-        var player = new KodiController(13000);
+        var player = new ChromecastController(13000);
 
         serviceManager.setPlayer(player);
 
         webServer.setPlayer(player);
         webServer.start();
         setTimeout(function () {
+            player.lanIP = webServer.lanIP;
             player.showNotification("Theater", "Theater application: " + webServer.lanIP);
         }, 5000);
     }
