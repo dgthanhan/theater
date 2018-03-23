@@ -8,6 +8,7 @@
     function ChromecastController() {
         this.status = "";
         this.trackCurrentPosition();
+        this.lanIP = Common.findLANAddress();
     }
 
     ChromecastController.prototype.saveStatus = function (status) {
@@ -148,7 +149,13 @@
                 return Promise.resolve();
             } else {
                 return new Promise(function (resolve, reject) {
-                    thiz.player.stop(resolve);
+                    try {
+                        thiz.player.stop(function () {});
+                    } catch (e) {
+                        console.error(e);
+                    } finally {
+                        resolve();
+                    }
                 });
             }
         } catch (e) {
@@ -203,7 +210,7 @@
 
             return;
         }
-        this.player.getStatus(function (status) {
+        this.player.getStatus(function (err, status) {
             if (status) thiz.saveStatus(status);
 
             setTimeout(function () {

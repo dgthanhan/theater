@@ -4,6 +4,7 @@
     const KodiController = require("../player/kodi.js");
     const OMXController = require("../player/omxplayer.js");
     const VLCController = require("../player/vlc.js");
+    const ChromecastController = require("../player/chromecast.js");
 
     var players = [];
     var activePlayer = null;
@@ -40,6 +41,7 @@
     };
 
     PlayerManager.registerPlayer("KODI", new KodiController(13000));
+    PlayerManager.registerPlayer("CAST", new ChromecastController());
     PlayerManager.registerPlayer("VLC", new VLCController());
     PlayerManager.registerPlayer("OMX", new OMXController());
 

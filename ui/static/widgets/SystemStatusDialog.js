@@ -76,10 +76,10 @@ SystemStatusDialog.prototype.setup = function (status) {
         } else {
             this.durationInfo.innerHTML = this.formatTime(position.length);
         }
-        var d = position.length ? (position.length.milliseconds + position.length.seconds * 1000 + position.length.minutes * 60 * 1000 +
+        var d = position.length ? ((position.length.milliseconds || 0) + position.length.seconds * 1000 + position.length.minutes * 60 * 1000 +
             position.length.hours * 60 * 60 * 1000) : 0;
 
-        var c = position.time ? (position.time.milliseconds + position.time.seconds * 1000 + position.time.minutes * 60 * 1000 +
+        var c = position.time ? ((position.length.milliseconds || 0) + position.time.seconds * 1000 + position.time.minutes * 60 * 1000 +
             position.time.hours * 60 * 60 * 1000) : 0;
 
         this.slider.max = d;
