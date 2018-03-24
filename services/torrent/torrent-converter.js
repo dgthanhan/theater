@@ -1,5 +1,7 @@
 (function () {
     const {State} = require("../common.js");
+    const playerManager = require("../../player/player-manager.js");
+
     const fs = require("fs");
 
     function TorrentConverter() {
@@ -20,6 +22,10 @@
         const readTorrent = require("read-torrent");
 
         this.status = State.Preparing;
+
+        var player = playerManager.getPlayer();
+
+        var subFormat = player.getSubtitlesFormat ? player.getSubtitlesFormat() : "srt";
 
         return new Promise(function (resolve, reject) {
             readTorrent(url, function (error, torrent) {
@@ -49,30 +55,36 @@
                         if (options && options.content && options.content.imdb) {
                             const subSearch = require("yifysubtitles");
                             options.content.subtitlePath = null;
-                            subSearch(options.content.imdb, {
-                                path: "/tmp",
-                                langs: ["en", "vi"],
-                                format: "vtt"
-                            }).then(function (subtitles) {
-                                if (subtitles && subtitles.length > 0) {
-                                    var sub = subtitles[0];
-                                    for (var s of subtitles) {
-                                        console.log(s);
-                                        if (options.lang && s.langShort && s.langShort == options.lang) {
-                                            sub = s;
-                                            break;
+
+                            function trySubtitles(lang, callback) {
+                                subSearch(options.content.imdb, {
+                                    path: "/tmp",
+                                    langs: [lang],
+                                    format: subFormat
+                                }).then(function (subtitles) {
+                                    if (subtitles && subtitles.length > 0) {
+                                        var sub = subtitles[0];
+                                        console.log("Used sub -->", sub);
+                                        options.content.subtitlePath = sub.path;
+                                        fs.createReadStream(options.content.subtitlePath).pipe(fs.createWriteStream("/tmp/theater-current." + subFormat));
+
+                                        callback();
+                                    } else {
+                                        if (lang != "en") {
+                                            trySubtitles("en", callback);
+                                        } else {
+                                            console.log("No subtitle found.");
+                                            callback();
                                         }
                                     }
-                                    console.log("Used sub -->", s);
-                                    options.content.subtitlePath = sub.path;
-                                    fs.createReadStream(options.content.subtitlePath).pipe(fs.createWriteStream("/tmp/theater-current.vtt"));
-                                } else {
-                                    console.log("No subtitle found.");
-                                }
-                                resolve(url);
-                            }).catch(function (e) {
-                                console.log("Failed to search for subtitles.");
-                                console.error(e);
+                                }).catch(function (e) {
+                                    console.log("Failed to search for subtitles.");
+                                    console.error(e);
+                                    callback();
+                                });
+                            }
+
+                            trySubtitles(options.lang, function () {
                                 resolve(url);
                             });
 

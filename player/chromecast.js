@@ -47,6 +47,13 @@
                     var srtUrl = "http://" + thiz.lanIP + ":12002/theater-current.vtt?t=" + (new Date().getTime());
                     console.log("Sub URL", srtUrl);
 
+                    var title = "Movie";
+                    var thumbnail = "";
+                    if (options && options.content && options.content.content) {
+                        title = options.content.content.title;
+                        thumbnail = options.content.content.thumbnails[0] || "";
+                    }
+
                     var media = {
                         contentId: url.replace(/127.0.0.1/, thiz.lanIP),
                         contentType: 'video/mp4',
@@ -75,6 +82,16 @@
                             windowRoundedCornerRadius: 10, // radius in px
                             windowType: 'ROUNDED_CORNERS' // can be: "NONE", "NORMAL", "ROUNDED_CORNERS"
                         },
+
+                        metadata: {
+                            type: 0,
+                            metadataType: 0,
+                            title: title,
+                            images: [
+                                { url: thumbnail }
+                            ]
+                        }
+
                     };
 
                     player.on('status', function(status) {
@@ -116,6 +133,7 @@
 
     ChromecastController.prototype.play = function (url, options) {
         var thiz = this;
+        console.log("*** PLAY: ", JSON.stringify(options));
         this.args = {
             url: url,
             options: options
@@ -224,6 +242,10 @@
         return this.timeCache;
     };
 
+    ChromecastController.prototype.getSubtitlesFormat = function () {
+        return "vtt";
+    };
+    
     module.exports = ChromecastController;
 })();
 
