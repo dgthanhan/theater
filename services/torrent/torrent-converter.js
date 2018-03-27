@@ -63,7 +63,7 @@
                                     format: subFormat
                                 }).then(function (subtitles) {
                                     console.log("subtitles", subtitles);
-                                    if (subtitles && subtitles.length > 0) {
+                                    if (subtitles && subtitles.length > 0 && subtitles[0].path) {
                                         var sub = subtitles[0];
                                         console.log("Used sub -->", sub);
                                         options.content.subtitlePath = sub.path;
