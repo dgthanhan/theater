@@ -62,11 +62,17 @@
                                     langs: [lang],
                                     format: subFormat
                                 }).then(function (subtitles) {
+                                    console.log("subtitles", subtitles);
                                     if (subtitles && subtitles.length > 0) {
                                         var sub = subtitles[0];
                                         console.log("Used sub -->", sub);
                                         options.content.subtitlePath = sub.path;
-                                        fs.createReadStream(options.content.subtitlePath).pipe(fs.createWriteStream("/tmp/theater-current." + subFormat));
+
+                                        try {
+                                            fs.createReadStream(options.content.subtitlePath).pipe(fs.createWriteStream("/tmp/theater-current." + subFormat));
+                                        } catch (e) {
+                                            console.error(e);
+                                        }
 
                                         callback();
                                     } else {
