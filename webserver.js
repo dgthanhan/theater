@@ -180,12 +180,27 @@
             var callback = request.query.cb || "cb";
             var content = JSON.parse(json);
             
-            serviceManager.getService("external").add(content);
+            const serviceType = "external";
             
-            response.setHeader('Content-type', 'application/javascript');
-            response.charset = 'UTF-8';
-            response.write(callback + "();");
-            response.end();
+            serviceManager.getService(serviceType).add(content);
+            
+            var options = {
+                            type: serviceType,
+                            url: content.url,
+                            selectedUrl: content.url,
+                            lang: "EN",
+                            player: playerManager.getActivePlayerId() || playerManager.getAllPlayers()[0].name
+                        };
+                        
+            serviceManager.play(options).then(function () {
+                response.setHeader('Content-type', 'application/javascript');
+                response.charset = 'UTF-8';
+                response.write(callback + "();");
+                response.end();
+            }).catch (function (e) {
+                console.error(e);
+                response.status(500).send(e);
+            });
         });
 
         server.get("/api/reboot", function (request, response) {
