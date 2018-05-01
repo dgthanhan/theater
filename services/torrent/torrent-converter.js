@@ -114,7 +114,9 @@
                 this.flix.server.close(function () {});
                 this.flix.destroy(function () {});
                 this.flix = null;
-            } catch (e) { }
+            } catch (e) {
+                console.error(e);
+            }
         }
     };
 

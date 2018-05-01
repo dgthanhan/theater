@@ -23,6 +23,7 @@
     };
 
     Manager.registerService(require("./torrent/module.js"));
+    Manager.registerService(require("./external/module.js"));
     Manager.registerService(require("./sopcast/module.js"));
     Manager.registerService(require("./youtube/module.js"));
 

@@ -173,6 +173,20 @@
                 response.status(500).send(e);
             });
         });
+        server.get("/api/external/add", function (request, response) {
+            console.log("External add requested:");
+            var json = request.query.content;
+            console.log("json: " + json);
+            var callback = request.query.cb || "cb";
+            var content = JSON.parse(json);
+            
+            serviceManager.getService("external").add(content);
+            
+            response.setHeader('Content-type', 'application/javascript');
+            response.charset = 'UTF-8';
+            response.write(callback + "();");
+            response.end();
+        });
 
         server.get("/api/reboot", function (request, response) {
             serviceManager.reboot().then(function () {

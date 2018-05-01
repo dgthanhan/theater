@@ -68,6 +68,7 @@
         this.pendingSeek = null;
         this.currentContentId = options ? options.id : url;
         var thiz = this;
+        console.log("KODI play request: '" + url + "'");
 
         return new Promise(function (resolve, reject) {
             thiz._get({

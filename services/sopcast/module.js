@@ -7,7 +7,7 @@
 
     function SopcastService() {
         this.type = SopcastService.TYPE;
-        this.name = "Sopcast";
+        this.name = "Sop";
         this.converter = null;
         this.sources = [
             require("./source-sopsport_org.js")
