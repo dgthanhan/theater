@@ -1,6 +1,7 @@
 (function () {
     const {State} = require("../common.js");
     const BaseService = require("../base-service.js");
+    const fs = require("fs");
 
     function ExternalVideoService() {
         this.type = ExternalVideoService.TYPE;
@@ -24,6 +25,14 @@
     };
     ExternalVideoService.prototype.start = function (data) {
         var content = data.content;
+        
+        try {
+            var srtPath = "/tmp/theater-current.srt";
+            fs.unlinkSync(srtPath);
+        } catch (e) {
+            console.error(e);
+        }
+        
         return Promise.resolve({
             url: content.url,
             content: content
