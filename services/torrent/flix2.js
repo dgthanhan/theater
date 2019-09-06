@@ -165,6 +165,7 @@ var createServer = function (e, opts) {
         if (!range) {
             response.setHeader('Content-Length', file.length)
             if (request.method === 'HEAD') return response.end()
+            response.statusCode = 200
             pump(file.createReadStream(), response)
             return
         }

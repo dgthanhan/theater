@@ -2,15 +2,14 @@
     var Client                = require('castv2-client').Client;
     var DefaultMediaReceiver  = require('castv2-client').DefaultMediaReceiver;
     var mdns                  = require('mdns');
-
     const Common = require("../services/common.js");
 
-    function ChromecastController() {
+    function ChromecastController(address, port) {
         this.status = "";
+        this.remoteAddress = address;
         this.trackCurrentPosition();
         this.lanIP = Common.findLANAddress();
     }
-
     ChromecastController.prototype.saveStatus = function (status) {
         try {
             this.status = status.playerState || "";
@@ -138,21 +137,9 @@
             url: url,
             options: options
         };
-
         return new Promise(function (resolve, reject) {
             thiz.stop().then(function () {
-                var sequence = [
-                    mdns.rst.DNSServiceResolve(),
-                    mdns.rst.getaddrinfo({families: [4] })
-                ];
-                var browser = mdns.createBrowser(mdns.tcp('googlecast'), {resolverSequence: sequence});
-                browser.on('serviceUp', function(service) {
-                    console.log('found device "%s" at %s:%d', service.name, service.addresses[0], service.port);
-                    thiz.playOn(service.addresses[0], url, options).then(resolve).catch(reject);
-                    browser.stop();
-                });
-
-                browser.start();
+                thiz.playOn(thiz.remoteAddress, url, options).then(resolve).catch(reject);
             });
         });
     };
@@ -245,7 +232,7 @@
     ChromecastController.prototype.getSubtitlesFormat = function () {
         return "vtt";
     };
-    
+
     module.exports = ChromecastController;
 })();
 

@@ -44,7 +44,7 @@
         server.get("/theater-current.vtt", function (request, response) {
             console.log("Got request to subtitle.");
             response.setHeader('Access-Control-Allow-Origin', '*');
-            response.setHeader('Content-type', 'text/vtt');
+            response.setHeader('Content-Type', 'text/vtt');
             response.charset = 'UTF-8';
             response.write(fs.readFileSync("/tmp/theater-current.vtt", "utf8"));
             response.end();
@@ -179,11 +179,11 @@
             console.log("json: " + json);
             var callback = request.query.cb || "cb";
             var content = JSON.parse(json);
-            
+
             const serviceType = "external";
-            
+
             serviceManager.getService(serviceType).add(content);
-            
+
             var options = {
                             type: serviceType,
                             url: content.url,
@@ -191,7 +191,7 @@
                             lang: "EN",
                             player: playerManager.getActivePlayerId() || playerManager.getAllPlayers()[0].name
                         };
-                        
+
             serviceManager.play(options).then(function () {
                 response.setHeader('Content-type', 'application/javascript');
                 response.charset = 'UTF-8';
