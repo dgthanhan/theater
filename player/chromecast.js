@@ -69,7 +69,7 @@
                         }],
 
                         textTrackStyle: {
-                            backgroundColor: '#00000000', // see http://dev.w3.org/csswg/css-color/#hex-notation
+                            backgroundColor: '#000000FF', // see http://dev.w3.org/csswg/css-color/#hex-notation
                             foregroundColor: '#FFFFFFFF', // see http://dev.w3.org/csswg/css-color/#hex-notation
                             edgeType: 'DROP_SHADOW', // can be: "NONE", "OUTLINE", "DROP_SHADOW", "RAISED", "DEPRESSED"
                             edgeColor: '#00000099', // see http://dev.w3.org/csswg/css-color/#hex-notation
