@@ -14,8 +14,18 @@
         this.browser.on('serviceUp', function(service) {
             console.log('found device "%s" at %s:%d', service.name, service.addresses[0], service.port);
             var device = {name: service.name, address: service.addresses[0], port: service.port};
-            devices.push(device);
-            if (thiz.callback) thiz.callback(device);
+            var added = false;
+            for (var index in thiz.devices) {
+                var d = thiz.devices[index];
+                if (d.address == device.address) {
+                    added = true;
+                    break;
+                }
+            }
+            if (!added) {
+                devices.push(device);
+                if (thiz.callback) thiz.callback(device);
+            }
         });
         this.browser.start();
     };
