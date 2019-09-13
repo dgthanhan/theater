@@ -20,11 +20,8 @@
         var thiz = this;
         const peerflix = require("./flix2.js");
         const readTorrent = require("read-torrent");
-
         this.status = State.Preparing;
-
         var player = playerManager.getPlayer();
-
         var subFormat = player.getSubtitlesFormat ? player.getSubtitlesFormat() : "srt";
 
         return new Promise(function (resolve, reject) {
@@ -50,8 +47,34 @@
                         thiz.status = State.Serving;
                         var url = 'http://127.0.0.1:' + thiz.flix.server.address().port + '/' + (movieFileName ? movieFileName : "");
                         console.log("Flix listening: " + url);
-
+                        console.log("Expected download: " + options.expectedDownloaded + "%");
                         //try searching subtitle
+
+                        var resolveFunc = function(url) {
+                            if (options.expectedDownloaded > 0) {
+                                var fetchSatus = function() {
+                                    var status = thiz.getFullStatus();
+                                    var downloaded = Math.round(status.swarmStats.downloaded * 100 / status.swarmStats.totalLength);
+                                    if (downloaded >= options.expectedDownloaded) {
+                                        if (thiz.waitingTask) clearTimeout(thiz.waitingTask);
+                                        thiz.waitingTask = null;
+                                        if (thiz.flix) {
+                                            console.log("Ready to play...", url);
+                                            resolve(url);
+                                        }
+                                    } else {
+                                        if (thiz.flix) {
+                                            thiz.waitingTask = setTimeout(fetchSatus, 5000);
+                                        }
+                                    }
+                                }
+                                fetchSatus();
+                            } else {
+                                resolve(url);
+                                console.log("Resolve called");
+                            }
+                        }
+
                         if (options && options.content && options.content.imdb) {
                             const subSearch = require("yifysubtitles");
                             options.content.subtitlePath = null;
@@ -91,13 +114,12 @@
                             }
 
                             trySubtitles(options.lang, function () {
-                                resolve(url);
+                                resolveFunc(url);
                             });
 
                         } else {
-                            resolve(url);
+                            resolveFunc(url);
                         }
-                        console.log("Resolve called");
                     });
                     thiz.flix.server.on('error', function (error) {
                         console.error(error);

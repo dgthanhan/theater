@@ -152,7 +152,7 @@
                 title: title || "Theater",
                 message: message
             }
-        });
+        }).then(function(){}).catch(function(){});
     };
     KodiController.POSITION_TRACK_INTERVAL = 1000;
 
@@ -198,13 +198,13 @@
                     setTimeout(function () {
                         thiz.trackCurrentPosition();
                     }, KodiController.POSITION_TRACK_INTERVAL);
-                });
+                }).catch(function(e){});
             } else {
                 setTimeout(function () {
                     thiz.trackCurrentPosition();
                 }, KodiController.POSITION_TRACK_INTERVAL);
             }
-        })
+        }).catch(function(e){});
     };
     KodiController.prototype.seekTo = function(seconds) {
         var thiz = this;

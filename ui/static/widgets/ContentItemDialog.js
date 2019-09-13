@@ -2,24 +2,19 @@ function ContentItemDialog() {
     BaseDialog.call(this);
     this.title = "Media Information";
     var thiz = this;
+
     this.bind("click", function () {
-        var link = thiz.linkCombo.getSelectedItem();
-        var lang = thiz.langCombo.getSelectedItem();
-        var player = thiz.playerManager.getSelectedItem();
-        API.get("/api/play", {
-            service: thiz.content.type,
-            url: thiz.content.url,
-            selectedUrl: link ? link.url : null,
-            lang: lang.key,
-            player: player ? player.name : ""
-        }).then(function () {
-            thiz.close();
-        });
+        thiz.play(0);
     }, this.playButton);
+
     this.bind("click", function () {
-        API.get("/api/stop").then(function () {
-        });
-    }, this.killButton);
+        var buffer = 5;
+        Dialog.confirm("Preload video before play?", "Preload " + buffer +"% video before send it to player"
+        ,"Preload", function() {
+            thiz.play(buffer);
+        },
+        "Cancel", function(){});
+    }, this.duration);
 
     this.linkCombo.renderer = function(item, selected) {
         return item.quality;
@@ -30,7 +25,7 @@ function ContentItemDialog() {
     this.langCombo.setItems([{name: "Tiếng Việt", key: "vi"}, {name: "English", key: "en"}])
 
     this.playerManager.renderer = function(item, selected) {
-        return "Player: " + item.name;
+        return "" + item.name;
     };
 
     this.playerManager.comparer = function(a, b) {
@@ -46,21 +41,39 @@ function ContentItemDialog() {
 
 __extend(BaseDialog, ContentItemDialog);
 
+ContentItemDialog.prototype.play = function(buffer) {
+    var thiz = this;
+    var link = thiz.linkCombo.getSelectedItem();
+    var lang = thiz.langCombo.getSelectedItem();
+    var player = thiz.playerManager.getSelectedItem();
+    API.get("/api/play", {
+        service: thiz.content.type,
+        url: thiz.content.url,
+        selectedUrl: link ? link.url : null,
+        lang: lang.key,
+        player: player ? player.name : "",
+        expectedDownloaded: buffer
+    }).then(function () {
+        thiz.close();
+    });
+}
 ContentItemDialog.prototype.getDialogActions = function () {
     return [
         {
-            type: "cancel", title: "Close",
+           type: "cancel", title: "Close",
             isCloseHandler: true,
             run: function () { return true; }
         },
         {   type: "accept",
             title: "Play",
             run: function () { return false; }
-        }];
+       }];
 };
+ContentItemDialog.prototype.onShown = function() {
+    Dom.addClass(this.dialogFrame, "ContentItemDialog");
+}
 ContentItemDialog.prototype.setup = function (media) {
     this.content = media;
-    console.log(media);
     this.posterImage.setUrl(this.content.thumbnails && this.content.thumbnails.length > 0 ? this.content.thumbnails[0] : "");
     if (this.content.imdb) {
         this.imdbLink.href = "http://www.imdb.com/title/" + this.content.imdb + "/";

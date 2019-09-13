@@ -13,10 +13,10 @@
         @footerPane {
             margin-top: 1em;
         }
-        .SecondaryText {
+        @this .SecondaryText {
             color: #c3c3c3;
         }
-        body .AnonId_dialogFooter {
+        body .ContentItemDialog .AnonId_dialogFooter {
             display: none;
         }
         @controlPane {
@@ -31,13 +31,14 @@
         @mediaDescription {
             margin-top: 0.5em;
             font-size: 0.9em;
-            max-height: 5em;
             text-overflow: ellipsis;
             line-height: 1.1;
-            overflow: hidden;
-            width: 17em;
+            overflow-x: hidden;
+            overflow-y: auto;
+            width: 19em;
+            max-height: 5em;
         }
-        .IMDb {
+        @this .IMDb {
             background-image: url('style/images/imdb.png');
             background-size: cover;
             width: 2em;
@@ -77,7 +78,7 @@
             width: 6.5em;
         }
 
-        .NoResult {
+        @this .NoResult {
             display: none;
         }
         @playButton {
@@ -89,6 +90,18 @@
         @playbackOptionsPane {
             align-items: center;
             margin-top: 0.5em;
+        }
+        @playerManager {
+            max-width: 10em;
+            min-width: 10em;
+        }
+        @playerManager .AnonId_buttonDisplay {
+            text-overflow: ellipsis;
+            flex: 1 1 1em;
+            display: flex;
+            flex-shrink: 1;
+            flex-direction: row;
+            margin-right: 2em;
         }
     </style>
     <hbox>

@@ -107,7 +107,8 @@
                             url: request.query.url,
                             selectedUrl: selectedUrl,
                             lang: request.query.lang || "EN",
-                            player: request.query.player
+                            player: request.query.player,
+                            expectedDownloaded:  request.query.expectedDownloaded
                         };
             serviceManager.play(options).then(function () {
                 response.json({message: "OK"})

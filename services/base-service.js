@@ -3,13 +3,11 @@ function BaseService() {
 }
 
 BaseService.prototype.getContents = function (options) {
-    console.log("getContents called on base service", this.type, options);
     if (!options) options = {};
     if (!options.forceRefresh && this.cachedContents) {
         return Promise.resolve(this.cachedContents);
     }
     return this.findAvailableContents(options).then(function (contents) {
-        console.log("Caching content for ", this.type, contents.length);
         this.cachedContents = contents;
         return contents;
     }.bind(this));
@@ -34,8 +32,7 @@ BaseService.prototype.start = function (data) {
         }
         thiz.converter = thiz.createConverter();
         var url = content.selectedUrl && content.selectedUrl.length > 0 ? content.selectedUrl : content.url;
-
-        thiz.converter.convert(url, {content: content, lang: data.lang}).then(function (url) {
+        thiz.converter.convert(url, {content: content, lang: data.lang, expectedDownloaded: data.expectedDownloaded}).then(function (url) {
             resolve({
                 url: url,
                 subtitlePath: content.subtitlePath,

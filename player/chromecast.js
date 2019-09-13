@@ -1,7 +1,6 @@
 (function () {
     var Client                = require('castv2-client').Client;
     var DefaultMediaReceiver  = require('castv2-client').DefaultMediaReceiver;
-    var mdns                  = require('mdns');
     const Common = require("../services/common.js");
 
     function ChromecastController(address, port) {

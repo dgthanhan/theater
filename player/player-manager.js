@@ -4,9 +4,6 @@
     const KodiController = require("../player/kodi.js");
     //const OMXController = require("../player/omxplayer.js");
     //const VLCController = require("../player/vlc.js");
-    const ChromecastController = require("../player/chromecast.js");
-    const LookupChromeCastController = require("../player/find-chromecast.js");
-
     var players = [];
     var activePlayer = null;
     var playerMap = {};
@@ -44,9 +41,5 @@
     PlayerManager.registerPlayer("KODI", new KodiController(13000));
     //PlayerManager.registerPlayer("VLC", new VLCController());
     //PlayerManager.registerPlayer("OMX", new OMXController());
-    var lccc = new LookupChromeCastController(function(castDevice) {
-        PlayerManager.registerPlayer("CAST-" + castDevice.address,  new ChromecastController(castDevice.address, castDevice.castDevice));
-    });
-    lccc.lookup();
     module.exports = PlayerManager;
 })();

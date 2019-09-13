@@ -33,7 +33,10 @@
 
     Manager.play = function (config) {
         var options = config || {};
-        console.log("play options: ", options);
+        //console.log("play options: ", options);
+        if (typeof(options.expectedDownloaded) == "undefined") {
+            options.expectedDownloaded = 10;
+        }
         return new Promise(function (resolve, reject) {
             playbackMessage = "Stopping player...";
             sayStatusChanged();
@@ -47,7 +50,7 @@
                 }
             }
 
-            player.stop().then(function() {
+            var playFunc =function() {
                 for (var s of services) {
                     if (s.type != options.type) s.terminate();
                 }
@@ -76,7 +79,7 @@
                 if (options.selectedUrl) {
                     content.selectedUrl = options.selectedUrl;
                 }
-                service.start({content: content, lang: options.lang}).then(function (resolvedContent) {
+                service.start({content: content, lang: options.lang, expectedDownloaded: options.expectedDownloaded}).then(function (resolvedContent) {
                     resolvedURL = resolvedContent.url;
                     playbackOK = true;
                     playbackMessage = "Sending media to player...";
@@ -98,6 +101,10 @@
                     console.error(e);
                     sayStatusChanged();
                 });
+            };
+
+            player.stop().then(function() {
+                playFunc();
             }).catch(function (e) {
                 playbackOK = false;
                 playbackMessage = "Failed to stop current playback: " + e;
@@ -106,7 +113,6 @@
             });
         });
     };
-
     Manager.resendPlayback = function () {
         var player = playerManager.getPlayer();
         return new Promise(function (resolve, reject) {

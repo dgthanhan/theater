@@ -30,9 +30,11 @@ function AppView() {
         thiz.count++;
         if (thiz.count >= 5) {
             thiz.count = 0;
-            Dialog.confirm("Reboot system?", "Reboot system to pull the newest Theater.", "Reboot", function() {
+            Dialog.confirm("Reboot system?", "Reboot system to pull the newest Theater."
+            ,"Reboot", function() {
                 API.get("/api/reboot").then(function () {});
-            }, "Cancel" , function() {});
+            },
+            "Cancel", function(){});
         }
     }, this.appIcon);
 }
