@@ -1,4 +1,5 @@
 (function () {
+    const fs = require("fs");
     const serviceManager = require("../services/service-manager.js");
     const KodiController = require("../player/kodi.js");
     const OMXController = require("../player/omxplayer.js");
