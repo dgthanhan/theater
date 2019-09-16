@@ -58,6 +58,9 @@ SystemStatusDialog.prototype.kodiTimeFromSeconds = function (seconds) {
 
     return time;
 }
+SystemStatusDialog.prototype.onShown = function() {
+    Dom.addClass(this.dialogFrame, "SystemStatusDialog");
+}
 SystemStatusDialog.prototype.getDialogActions = function () {
     return [{
         type: "cancel", title: "Close",

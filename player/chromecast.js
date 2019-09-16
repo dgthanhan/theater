@@ -72,7 +72,7 @@
                             foregroundColor: '#FFFFFFFF', // see http://dev.w3.org/csswg/css-color/#hex-notation
                             edgeType: 'DROP_SHADOW', // can be: "NONE", "OUTLINE", "DROP_SHADOW", "RAISED", "DEPRESSED"
                             edgeColor: '#00000099', // see http://dev.w3.org/csswg/css-color/#hex-notation
-                            fontScale: 1.3, // transforms into "font-size: " + (fontScale*100) +"%"
+                            fontScale: 1.2, // transforms into "font-size: " + (fontScale*100) +"%"
                             fontStyle: 'NORMAL', // can be: "NORMAL", "BOLD", "BOLD_ITALIC", "ITALIC",
                             fontFamily: 'Droid Sans', // specific font family
                             fontGenericFamily: 'SANS_SERIF', // can be: "SANS_SERIF", "MONOSPACED_SANS_SERIF", "SERIF", "MONOSPACED_SERIF", "CASUAL", "CURSIVE", "SMALL_CAPITALS",
@@ -98,28 +98,14 @@
 
                     console.log('app "%s" launched, loading media %s ...', player.session.displayName, media.contentId);
 
-                    player.load(media, { autoplay: true }, function(err, status) {
+                    player.load(media, { autoplay: true, activeTrackIds: [1]}, function(err, status) {
                         console.log('media loaded playerState=%s', status ? status.playerState : "");
 
                         if (err) {
                             reject(err);
                             return;
                         }
-
-                        player.media.sessionRequest({
-                            type: 'EDIT_TRACKS_INFO',
-                            activeTrackIds: [1] // switch to subtitle with trackId 2
-                        });
-
                         resolve();
-                        //
-                        // // Seek to 2 minutes after 15 seconds playing.
-                        // setTimeout(function() {
-                        //     player.seek(2*60, function(err, status) {
-                        //         //
-                        //     });
-                        // }, 15000);
-
                     });
 
                     thiz.player = player;
@@ -131,11 +117,7 @@
 
     ChromecastController.prototype.play = function (url, options) {
         var thiz = this;
-        console.log("*** PLAY: ", JSON.stringify(options));
-        this.args = {
-            url: url,
-            options: options
-        };
+        console.log("*** PLAY: ", url, JSON.stringify(options));
         return new Promise(function (resolve, reject) {
             thiz.stop().then(function () {
                 thiz.playOn(thiz.remoteAddress, url, options).then(resolve).catch(reject);
@@ -152,7 +134,7 @@
             } else {
                 return new Promise(function (resolve, reject) {
                     try {
-                        thiz.player.stop(function () {});
+                        thiz.client.stop(thiz.player, function () {});
                     } catch (e) {
                         console.error(e);
                     } finally {

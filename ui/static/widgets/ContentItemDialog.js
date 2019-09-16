@@ -17,7 +17,7 @@ function ContentItemDialog() {
     }, this.duration);
 
     this.linkCombo.renderer = function(item, selected) {
-        return item.quality;
+        return item.quality && item.type  ? (item.quality + " [" + item.type + "-" + item.size + "]") : item.quality;
     }
     this.langCombo.renderer = function(item, selected) {
         return item.name;
