@@ -18,30 +18,28 @@ function SystemStatusDialog() {
     this.slider.min = 0;
     this.slider.step = 1000;
 
+    var pendingSeekValue = null;
+
     this.bind("input", function(e) {
         var v = thiz.slider.value;
         var moving = thiz.kodiTimeFromSeconds(v/1000);
         thiz.seekTo.innerHTML = thiz.formatTime(moving);
-        if (thiz.seekFunction) {
-            clearTimeout(thiz.seekFunction);
-        }
-        thiz.pendingSeek = true;
-        thiz.seekFunction = setTimeout(function() {
-            console.log("SeekTo --> " + (v/1000) + "s");
-            API.get("/api/seekTo", {seconds: v/1000}).then(function (o) {
-                console.log(o);
-                thiz.seekFunction = null;
-                thiz.seekTo.innerHTML = "";
-                setTimeout(function(){
-                    thiz.pendingSeek = false;
-                }, 10000);
-            });
-        }, 1000);
-        thiz.seekFunction.time = moving;
-
+        
+        
+        pendingSeekValue = v;
     }, this.slider);
 
-    this.pendingSeek = false;
+    this.bind("mouseup", function(e) {
+        if (pendingSeekValue == null) return;
+        
+        API.get("/api/seekTo", {seconds: pendingSeekValue/1000}).then(function (o) {
+            console.log(o);
+            thiz.seekTo.innerHTML = "";
+        });
+        
+        pendingSeekValue = null;
+
+    }, this.slider);
 }
 
 __extend(BaseDialog, SystemStatusDialog);
