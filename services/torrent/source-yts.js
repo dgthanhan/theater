@@ -93,6 +93,7 @@
                             if (!movie.torrents || movie.torrents.length == 0) continue;
                             var torrent = null;
                             for (var t of movie.torrents) {
+                                console.log("Source", t);
                                 if (t.quality == "1080p") {
                                     torrent = t;
                                     break;

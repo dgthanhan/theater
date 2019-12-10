@@ -82,6 +82,7 @@
                     if (movies != null && movies.length > 0) {
                         for (var movie of movies) {
                             if (!movie.torrents || !movie.torrents.en) continue;
+                            console.log("movie", movie.torrents);
                             var fullhd = movie.torrents.en["1080p"];
                             var hd = movie.torrents.en["720p"];
                             var video = fullhd ? fullhd : hd;
@@ -99,8 +100,8 @@
                                 rating: movie.rating.percentage / 10,
                                 watching: movie.rating.watching,
                                 extras: {
-                                    torrents: [{quality: fullhd ? "1080p" : "", url : fullhd ? fullhd.url : ""},
-                                                {quality: hd ? "720p" : "", url : hd ? hd.url : ""}]
+                                    torrents: [{quality: fullhd ? "1080p" : "", size: fullhd ? fullhd.filesize : "", url : fullhd ? fullhd.url : ""},
+                                                {quality: hd ? "720p" : "", size: hd ? hd.filesize : "", url : hd ? hd.url : ""}]
                                 }
 
                             };

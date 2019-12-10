@@ -75,7 +75,7 @@
                             }
                         }
 
-                        if (options && options.content && options.content.imdb) {
+                        if (options.lang != "nosub" && options && options.content && options.content.imdb) {
                             const subSearch = require("yifysubtitles");
                             options.content.subtitlePath = null;
 
@@ -118,6 +118,16 @@
                             });
 
                         } else {
+                            var fileName = "/tmp/theater-current." + subFormat;
+                            fs.unlink(fileName, function(err) {
+                                if (err && err.code == 'ENOENT') {
+                                    console.log("Subtitle doesn't exist, won't remove it.");
+                                } else if (err) {
+                                    console.log("Error occurred while trying to remove subtitle file");
+                                } else {
+                                    console.log("removed subtitle");
+                                }
+                            });
                             resolveFunc(url);
                         }
                     });

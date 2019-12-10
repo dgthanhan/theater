@@ -17,12 +17,12 @@ function ContentItemDialog() {
     }, this.duration);
 
     this.linkCombo.renderer = function(item, selected) {
-        return item.quality && item.type  ? (item.quality + " [" + item.type + "-" + item.size + "]") : item.quality;
+        return item.quality && item.size  ? (item.quality + " [" + (item.type ? (item.type + " - ") : "") + item.size + "]") : item.quality;
     }
     this.langCombo.renderer = function(item, selected) {
         return item.name;
     }
-    this.langCombo.setItems([{name: "Tiếng Việt", key: "vi"}, {name: "English", key: "en"}])
+    this.langCombo.setItems([{name: "English", key: "en"}, {name: "Tiếng Việt", key: "vi"}, { name: "No Subtitle", key: "nosub"}])
 
     this.playerManager.renderer = function(item, selected) {
         return "" + item.name;

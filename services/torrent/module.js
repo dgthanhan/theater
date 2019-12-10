@@ -21,7 +21,7 @@
     TorrentService.prototype = new BaseService();
 
     TorrentService.prototype.fetchPlaybackInfo = function(options) {
-        var content = this.cache[options.url];
+        var content =  this.cache ? this.cache[options.url] : undefined;
         if (!content) return {id: 0};
         content.playableLinks = content.extras.torrents;
         return content;
@@ -69,6 +69,6 @@
     TorrentService.prototype.createConverter = function (content) {
         return new TorrentConverter();
     };
-    
+
     module.exports = new TorrentService();
 })();
