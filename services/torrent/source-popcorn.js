@@ -52,7 +52,7 @@
                 var sortBy = options.sortBy || "";
                 var page = options.page || 1;
                 var limit = options.limit || 50;
-                var url = "https://tv-v2.api-fetch.website/movies/" + page + "?keywords=" + encodeURIComponent(keyword);
+                var url = "https://tv-v2.api-fetch.sh/movies/" + page + "?keywords=" + encodeURIComponent(keyword);
 
                 if (genre.length > 0) {
                     url += "&genre=" + encodeURIComponent(genre);
